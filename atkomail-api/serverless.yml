@@ -1,0 +1,75 @@
+org: andymarch
+app: atkomail-api
+service: atkomail-api
+
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: '20201221'
+  environment:
+    BUCKET: ${file(./config.${opt:stage, self:provider.stage, 'dev'}.json):bucket-name}
+    ISSUER: ${file(./config.${opt:stage, self:provider.stage, 'dev'}.json):issuer-uri}
+    AUDIENCE: ${file(./config.${opt:stage, self:provider.stage, 'dev'}.json):audience}
+  iam:
+    role:
+      statements:
+        - Effect: 'Allow'
+          Action:
+            - 's3:ListBucket'
+            - 's3:GetObject'
+            - 's3:PutObject'
+            - 's3:DeleteObject'
+          Resource: "arn:aws:s3:::atkoemail"
+
+functions:
+  #Authorizers
+  auth:
+    handler: src/authorizer/handler.auth
+
+  #Internal Lambda
+  sort:
+    handler: src/mailroom/s3.sort
+
+  #Public API
+  list:
+    handler: src/mail/list.handler
+    events:
+      - http:
+          path: /mail/{email}
+          method: get
+          authorizer:
+            name: auth
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: ^Bearer [-0-9a-zA-z\.]*$
+  get:
+    handler: src/mail/get.handler
+    events:
+      - http:
+          path: /mail/{email}/{id}
+          method: get
+          authorizer:
+            name: auth
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: ^Bearer [-0-9a-zA-z\.]*$
+  delete:
+    handler: src/mail/delete.handler
+    events:
+      - http:
+          path: /mail/{email}/{id}
+          method: delete
+          authorizer:
+            name: auth
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: ^Bearer [-0-9a-zA-z\.]*$
+  deleteAll:
+    handler: src/mail/deleteAll.handler
+    events:
+      - http:
+          path: /mail/{email}
+          method: delete
+          authorizer:
+            name: auth
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: ^Bearer [-0-9a-zA-z\.]*$
