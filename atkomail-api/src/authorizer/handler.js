@@ -12,6 +12,7 @@ exports.auth = (event, context) => {
             generateAuthResponse(jwt.claims.sub, 'Allow',  event.methodArn))
     })
     .catch(() => {
+        console.log("token failed validation")
         context.fail('Unauthorized')
     });
 };
