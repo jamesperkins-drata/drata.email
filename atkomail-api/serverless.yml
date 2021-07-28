@@ -12,6 +12,7 @@ provider:
     BUCKET: ${file(./config.${opt:stage, self:provider.stage, 'dev'}.json):bucket-name}
     ISSUER: ${file(./config.${opt:stage, self:provider.stage, 'dev'}.json):issuer-uri}
     AUDIENCE: ${file(./config.${opt:stage, self:provider.stage, 'dev'}.json):audience}
+    ORIGINS: ${file(./config.${opt:stage, self:provider.stage, 'dev'}.json):origins}
   iam:
     role:
       statements:
@@ -39,6 +40,7 @@ functions:
       - http:
           path: /mail/{email}
           method: get
+          cors: true
           authorizer:
             name: auth
             identitySource: method.request.header.Authorization
@@ -49,6 +51,7 @@ functions:
       - http:
           path: /mail/{email}/{id}
           method: get
+          cors: true
           authorizer:
             name: auth
             identitySource: method.request.header.Authorization
@@ -59,6 +62,7 @@ functions:
       - http:
           path: /mail/{email}/{id}
           method: delete
+          cors: true
           authorizer:
             name: auth
             identitySource: method.request.header.Authorization
@@ -69,6 +73,7 @@ functions:
       - http:
           path: /mail/{email}
           method: delete
+          cors: true
           authorizer:
             name: auth
             identitySource: method.request.header.Authorization

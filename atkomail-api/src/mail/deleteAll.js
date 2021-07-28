@@ -1,9 +1,11 @@
-var AWS = require('aws-sdk');
-var s3 = new AWS.S3();
+const middy = require('@middy/core')
+const cors = require('@middy/http-cors')
+const AWS = require('aws-sdk');
 
+var s3 = new AWS.S3();
 var bucketName = process.env.BUCKET;
 
-module.exports.handler = async (event) => {
+const baseHandler = async (event) => {
 
     var listParams = {
         Bucket: bucketName, 
@@ -16,7 +18,7 @@ module.exports.handler = async (event) => {
         var result = await s3.listObjectsV2(listParams).promise()
         if(result.Contents.length == 0){
             return {
-                statusCode: 200,
+                statusCode: 200
             }
         }
         else{
@@ -35,7 +37,7 @@ module.exports.handler = async (event) => {
             }
             await s3.deleteObject(deleteParams).promise()
             return {
-                statusCode: 200,
+                statusCode: 200
             }
         }
     }
@@ -47,3 +49,11 @@ module.exports.handler = async (event) => {
         }
     }
 }
+
+const handler = middy(baseHandler)
+.use(cors({
+    credentials: true,
+    origins: process.env.ORIGINS
+}))
+
+module.exports = {handler}

@@ -1,10 +1,11 @@
-var AWS = require('aws-sdk');
-var s3 = new AWS.S3();
+const middy = require('@middy/core')
+const cors = require('@middy/http-cors')
+const AWS = require('aws-sdk');
 
+var s3 = new AWS.S3();
 var bucketName = process.env.BUCKET;
 
-module.exports.handler = async (event) => {
-
+const baseHandler = async (event) => {
     try {                
         var deleteParams = {
             Bucket: bucketName,
@@ -12,7 +13,7 @@ module.exports.handler = async (event) => {
         }
         await s3.deleteObject(deleteParams).promise()
         return {
-            statusCode: 200
+            statusCode: 200,
         }
     }
     catch(error){
@@ -24,3 +25,11 @@ module.exports.handler = async (event) => {
     }
 
 }
+
+const handler = middy(baseHandler)
+.use(cors({
+    credentials: true,
+    origins: process.env.ORIGINS
+}))
+
+module.exports = {handler}

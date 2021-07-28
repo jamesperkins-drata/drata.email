@@ -1,10 +1,12 @@
-var AWS = require('aws-sdk');
-var s3 = new AWS.S3();
+const middy = require('@middy/core')
+const cors = require('@middy/http-cors')
+const AWS = require('aws-sdk');
 const simpleParser = require('mailparser').simpleParser;
 
+var s3 = new AWS.S3();
 var bucketName = process.env.BUCKET;
 
-module.exports.handler = async (event) => {
+const baseHandler = async (event) => {
 
     try {                
         var getParams = {
@@ -27,3 +29,11 @@ module.exports.handler = async (event) => {
     }
 
 }
+
+const handler = middy(baseHandler)
+.use(cors({
+    credentials: true,
+    origins: process.env.ORIGINS
+}))
+
+module.exports = {handler}
