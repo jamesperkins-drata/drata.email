@@ -13,6 +13,7 @@ provider:
     ISSUER: ${file(./config.${opt:stage, self:provider.stage, 'dev'}.json):issuer-uri}
     AUDIENCE: ${file(./config.${opt:stage, self:provider.stage, 'dev'}.json):audience}
     ORIGINS: ${file(./config.${opt:stage, self:provider.stage, 'dev'}.json):origins}
+    FIXED_AUTH_SECRET: ${file(./config.${opt:stage, self:provider.stage, 'dev'}.json):fixed-secret}
   iam:
     role:
       statements:
@@ -68,6 +69,8 @@ functions:
   #Authorizers
   auth:
     handler: src/authorizer/handler.auth
+  fixed:
+    handler: src/authorizer/handler.fixed
 
   #Internal Lambda
   sort:
@@ -118,3 +121,13 @@ functions:
             name: auth
             identitySource: method.request.header.Authorization
             identityValidationExpression: ^Bearer [-0-9a-zA-z\.]*$
+  registrationHook:
+    handler: src/events/registration.handler
+    events:
+      - http:
+          path: /events/registration
+          method: post
+          authorizer:
+            name: fixed
+            identitySource: method.request.header.Authorization
+

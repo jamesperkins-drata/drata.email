@@ -17,6 +17,17 @@ exports.auth = (event, context) => {
     });
 };
 
+
+exports.fixed = (event, context) => {
+    if(event.authorizationToken == process.env.FIXED_AUTH_SECRET) {
+        context.succeed(
+            generateAuthResponse("fixedToken", 'Allow',  event.methodArn))
+    }
+    else{
+        context.fail('Unauthorized')
+    }
+}
+
 function parseTokenFromEvent(event){
     return event.authorizationToken.split(' ')[1]
 }
