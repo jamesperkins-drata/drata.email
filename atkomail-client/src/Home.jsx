@@ -1,6 +1,6 @@
 import { useOktaAuth } from '@okta/okta-react';
 import React, { useState, useEffect } from 'react';
-import { Icon, Input, Button, List, Divider, Grid, GridRow} from 'semantic-ui-react';
+import { Icon, Input, Button, Divider, Grid, GridRow} from 'semantic-ui-react';
 import MailRender from './MailRender';
 import Mailbox from './Mailbox';
 import axios from 'axios'
@@ -50,7 +50,7 @@ const Home = () => {
       e.preventDefault();
       }
       axios
-      .get(config.resourceServer.endpoint +"mail/"+mailbox+"@"+domain, {
+      .get(config.resourceServer.endpoint +"/mail/"+mailbox+"@"+domain, {
         headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() },
       })
       .then((data)=>{

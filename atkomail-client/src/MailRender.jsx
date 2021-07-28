@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { useOktaAuth } from '@okta/okta-react';
 import axios from 'axios'
 import config from './config'
-import { Icon, Container, Button, List} from 'semantic-ui-react';
+import { Icon, Container, Button} from 'semantic-ui-react';
 import ReactHtmlParser from 'react-html-parser'; 
 
 const MailRender = (props) => {
-    const { authState, oktaAuth } = useOktaAuth();
     const [msg,setMsg] = useState(null)
 
     const getMail = (e) => {
         axios
-        .get(config.resourceServer.endpoint +"mail/"+props.msgId, {
+        .get(config.resourceServer.endpoint +"/mail/"+props.msgId, {
           headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() },
         })
         .then((data)=>{
@@ -22,7 +20,7 @@ const MailRender = (props) => {
 
     const deleteMail = (e) => {
         axios
-        .delete(config.resourceServer.endpoint +"mail/"+props.msgId, {
+        .delete(config.resourceServer.endpoint +"/mail/"+props.msgId, {
           headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() },
         })
         .then((data)=>{

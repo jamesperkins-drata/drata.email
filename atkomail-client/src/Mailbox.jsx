@@ -1,5 +1,5 @@
 import React from 'react'
-import { Icon, Container, List, GridRow, Button} from 'semantic-ui-react';
+import { Icon, Container, List, Button} from 'semantic-ui-react';
 import ReactTimeAgo from 'react-time-ago'
 
 const Mailbox = (props) => {
