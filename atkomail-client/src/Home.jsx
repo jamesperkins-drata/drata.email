@@ -1,6 +1,6 @@
 import { useOktaAuth } from '@okta/okta-react';
 import React, { useState, useEffect } from 'react';
-import { Icon, Input, Button, List} from 'semantic-ui-react';
+import { Icon, Input, Button, List, Divider, Grid, GridRow} from 'semantic-ui-react';
 import MailRender from './MailRender';
 import Mailbox from './Mailbox';
 import axios from 'axios'
@@ -64,25 +64,37 @@ const Home = () => {
 
 
   return (
-    <div>
-      <div>
-          <Icon name="mail" />
-          <Input id="mailbox" name="mailbox" placeholder='anything' onChange={handleChange} value={mailbox}/>
-          <Input id="domain" name="domain" value={domain} disabled />
-          <Button animated onClick={showMailbox}>
-              <Button.Content visible>GO</Button.Content>
-              <Button.Content hidden>
-                  <Icon name='arrow right' />
-              </Button.Content>
-          </Button>
-      </div>
-      {active === 'MAILBOX' ? (
-        <Mailbox mailbox={mailbox} domain={domain} getMailEvent={getMail} messages={messages}/>
-      ) : active === 'MAIL' ? (
-        <MailRender msgId={msgId} showMailboxEvent={showMailbox}/>
-      ) : null }
-
-    </div>
+    <GridRow>
+      <Grid padded>
+      <Grid.Row color='grey' centered >
+        <Grid.Column centered textAlign='center'>
+          <h2>Simple demonstration emails</h2>
+          
+          <div>
+              <Icon name="mail" size='large' />
+              <span>
+                <Input id="mailbox" name="mailbox" placeholder='anything' onChange={handleChange} value={mailbox} />
+                <b>@</b>
+                <Input disabled value={domain}></Input> 
+              </span>
+              <Button compact positive animated onClick={showMailbox} style={{marginLeft:'.25rem'}}>
+                  <Button.Content visible>GO</Button.Content>
+                  <Button.Content hidden>
+                      <Icon name='arrow right' />
+                  </Button.Content>
+              </Button>
+          </div>
+          <p>Any email will be automatically deleted after 24 hours.</p>
+        </Grid.Column> 
+      </Grid.Row>
+      </Grid>
+      <Divider hidden />
+        {active === 'MAILBOX' ? (
+          <Mailbox mailbox={mailbox} domain={domain} getMailEvent={getMail} messages={messages}/>
+        ) : active === 'MAIL' ? (
+          <MailRender msgId={msgId} showMailboxEvent={showMailbox}/>
+        ) : null }
+    </GridRow>
   );
 };
 export default Home;

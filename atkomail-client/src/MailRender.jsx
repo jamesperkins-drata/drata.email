@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useOktaAuth } from '@okta/okta-react';
 import axios from 'axios'
 import config from './config'
-import { Icon, Input, Button, List} from 'semantic-ui-react';
+import { Icon, Container, Button, List} from 'semantic-ui-react';
 import ReactHtmlParser from 'react-html-parser'; 
 
 const MailRender = (props) => {
@@ -40,8 +40,11 @@ const MailRender = (props) => {
     }, [])
 
     return (
-        <div>
-            <div><Button onClick={props.showMailboxEvent}>Back to mailbox</Button><Button onClick={deleteMail}><Icon fitted name='trash' size='small'/></Button></div>
+        <Container padded>
+            <Container style={{paddingBottom:'20px'}}>
+                <Button onClick={props.showMailboxEvent}>Back to mailbox</Button>
+                <Button color='red' onClick={deleteMail}><Icon fitted name='trash' size='small'/></Button>
+            </Container>
             {
                 msg ? (
                 <div>
@@ -51,13 +54,13 @@ const MailRender = (props) => {
                     <div> { ReactHtmlParser (msg.html) } </div>
                 </div>
             ) : (
-                <div>
-                    <div>loading</div>
+                <Container>
+                    <div>Loading</div>
                     <div><Icon loading name='spinner' /></div>
-                </div>
+                </Container>
                 )
         }
-        </div>
+        </Container>
     )
 }
 export default MailRender;

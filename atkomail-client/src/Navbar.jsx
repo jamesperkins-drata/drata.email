@@ -48,10 +48,10 @@ const Navbar = ({ setCorsErrorModalOpen }) => {
             <Link to="/">ATKO.email</Link>
           </Menu.Item>
           {authState.isAuthenticated && (
-            <Menu.Item id="logout-button" onClick={logout}>Logout</Menu.Item>
+            <Menu.Item position='right' id="logout-button" onClick={logout}>Logout</Menu.Item>
           )}
           {!authState.isPending && !authState.isAuthenticated && (
-            <Menu.Item onClick={login}>Login</Menu.Item>
+            <Menu.Item position='right' onClick={login}>Login</Menu.Item>
           )}
         </Container>
       </Menu>
