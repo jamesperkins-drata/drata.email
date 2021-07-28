@@ -15,7 +15,6 @@ const MailRender = (props) => {
           headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() },
         })
         .then((data)=>{
-            console.log(data)
             setMsg(data.data);
         })
         .catch((error)=> {console.error(error)})
@@ -35,7 +34,6 @@ const MailRender = (props) => {
     useEffect(() => {
         getMail()
         return () => {
-            console.log("clean")
         }
     }, [])
 

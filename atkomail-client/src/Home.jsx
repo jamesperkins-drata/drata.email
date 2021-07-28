@@ -54,7 +54,6 @@ const Home = () => {
         headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() },
       })
       .then((data)=>{
-          console.log(data)
           setMessages(data.data.messages);
       })
       .catch((error)=> {
