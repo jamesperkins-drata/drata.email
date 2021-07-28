@@ -6,12 +6,10 @@ import { Grid } from 'semantic-ui-react';
 import config from './config';
 import Home from './Home';
 import Navbar from './Navbar';
-import CorsErrorModal from './CorsErrorModal';
 
 const oktaAuth = new OktaAuth(config.oidc);
 
 const App = () => {
-  const [corsErrorModalOpen, setCorsErrorModalOpen] = React.useState(false);
   const history = useHistory();
   const restoreOriginalUri = async (_oktaAuth, originalUri) => {
     history.replace(toRelativeUrl(originalUri || '/', window.location.origin));

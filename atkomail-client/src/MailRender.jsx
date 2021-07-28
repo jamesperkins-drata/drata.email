@@ -1,22 +1,13 @@
 import React, { useState, useEffect } from 'react'
+import { useOktaAuth } from '@okta/okta-react';
 import axios from 'axios'
 import config from './config'
 import { Icon, Container, Button} from 'semantic-ui-react';
 import ReactHtmlParser from 'react-html-parser'; 
 
 const MailRender = (props) => {
+    const { oktaAuth } = useOktaAuth();
     const [msg,setMsg] = useState(null)
-
-    const getMail = (e) => {
-        axios
-        .get(config.resourceServer.endpoint +"/mail/"+props.msgId, {
-          headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() },
-        })
-        .then((data)=>{
-            setMsg(data.data);
-        })
-        .catch((error)=> {console.error(error)})
-      };
 
     const deleteMail = (e) => {
         axios
@@ -30,10 +21,17 @@ const MailRender = (props) => {
     };
 
     useEffect(() => {
-        getMail()
+        axios
+        .get(config.resourceServer.endpoint +"/mail/"+props.msgId, {
+          headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() },
+        })
+        .then((data)=>{
+            setMsg(data.data);
+        })
+        .catch((error)=> {console.error(error)})
         return () => {
         }
-    }, [])
+    }, [props.msgId, oktaAuth])
 
     return (
         <Container padded>

@@ -17,23 +17,7 @@ const Home = () => {
   const domain = "atko.email"
   const handleChange = (e) => setMailbox(e.target.value);
   const [msgId, setMsgID] = useState("")
-  
-  useEffect(() => {
-    if (!authState || !authState.isAuthenticated) {
-      setUserInfo(null);
-    } else {
-      oktaAuth.getUser().then((info) => {
-        setUserInfo(info);
-        getMailbox()
-      });
-    }
-  }, [authState, oktaAuth]); // Update if authState changes
 
-  if (!authState) {
-    return (
-      <div>Loading...</div>
-    );
-  }
 
   const getMail = (event) => {
     setMsgID(event.target.id)
@@ -60,6 +44,23 @@ const Home = () => {
         console.error(error)
       })
     };
+
+    useEffect(() => {
+      if (!authState || !authState.isAuthenticated) {
+        setUserInfo(null);
+      } else {
+        oktaAuth.getUser().then((info) => {
+          setUserInfo(info);
+          //TODO work out a better place of this call
+          getMailbox()
+        });
+      }
+    }, [authState, oktaAuth]);
+    if (!authState) {
+      return (
+        <div>Loading...</div>
+      );
+    }
 
 
   return (

@@ -13,7 +13,7 @@
 import { useOktaAuth } from '@okta/okta-react';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Container, Icon, Image, Menu, Input, Button } from 'semantic-ui-react';
+import { Container, Icon, Menu } from 'semantic-ui-react';
 
 const Navbar = ({ setCorsErrorModalOpen }) => {
   const { authState, oktaAuth } = useOktaAuth();
