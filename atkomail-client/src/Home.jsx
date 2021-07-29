@@ -7,16 +7,15 @@ import axios from 'axios'
 import config from './config'
 
 const Home = () => {
-  const { authState, oktaAuth } = useOktaAuth();
+  const {authState, oktaAuth} = useOktaAuth();
   const [userInfo, setUserInfo] = useState(null);
-
   const [active, setActive] = useState('MAILBOX')
+  const [mailbox, setMailbox] = useState("")
+  const [msgId, setMsgID] = useState("")
 
-  const [messages,setMessages] = useState(null)
-  const [mailbox, setMailbox] = useState('testacc')
   const domain = "atko.email"
   const handleChange = (e) => setMailbox(e.target.value);
-  const [msgId, setMsgID] = useState("")
+
 
 
   const getMail = (event) => {
@@ -26,41 +25,23 @@ const Home = () => {
 
   const showMailbox = ()=> {
     setActive('MAILBOX')
-    getMailbox()
   }
 
-  const getMailbox = (e) => {
-      if(e){
-      e.preventDefault();
-      }
-      axios
-      .get(config.resourceServer.endpoint +"/mail/"+mailbox+"@"+domain, {
-        headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() },
+  useEffect(() => {
+    if (!authState || !authState.isAuthenticated) {
+      setUserInfo(null);
+    } else {
+      oktaAuth.getUser().then((info) => {
+        setUserInfo(info);
+        setMailbox(info.email.split('@')[0])
       })
-      .then((data)=>{
-          setMessages(data.data.messages);
-      })
-      .catch((error)=> {
-        console.error(error)
-      })
-    };
-
-    useEffect(() => {
-      if (!authState || !authState.isAuthenticated) {
-        setUserInfo(null);
-      } else {
-        oktaAuth.getUser().then((info) => {
-          setUserInfo(info);
-          //TODO work out a better place of this call
-          getMailbox()
-        });
-      }
-    }, [authState, oktaAuth]);
-    if (!authState) {
-      return (
-        <div>Loading...</div>
-      );
     }
+  }, [authState, oktaAuth]);
+  if (!authState) {
+    return (
+      <div>Loading...</div>
+    );
+  }
 
 
   return (
@@ -69,15 +50,15 @@ const Home = () => {
       <Grid.Row color='grey' centered >
         <Grid.Column centered textAlign='center'>
           <h2>Simple demonstration emails</h2>
-          
+          <p>Collect email from any address under a domain.</p>
           <div>
               <Icon name="mail" size='large' />
               <span>
-                <Input id="mailbox" name="mailbox" placeholder='anything' onChange={handleChange} value={mailbox} />
-                <b>@</b>
+                <Input id="mailbox" name="mailbox" placeholder='' onChange={handleChange} value={mailbox}/>
+                <b style={{marginLeft:'.25rem', marginRight:'.25rem'}}>@</b>
                 <Input disabled value={domain}></Input> 
               </span>
-              <Button compact positive animated onClick={showMailbox} style={{marginLeft:'.25rem'}}>
+              <Button fitted positive animated onClick={showMailbox} style={{marginLeft:'.25rem', marginTop:'-.3rem'}}>
                   <Button.Content visible>GO</Button.Content>
                   <Button.Content hidden>
                       <Icon name='arrow right' />
@@ -90,7 +71,7 @@ const Home = () => {
       </Grid>
       <Divider hidden />
         {active === 'MAILBOX' ? (
-          <Mailbox mailbox={mailbox} domain={domain} getMailEvent={getMail} messages={messages}/>
+          <Mailbox mailbox={mailbox} domain={domain} getMailEvent={getMail}/>
         ) : active === 'MAIL' ? (
           <MailRender msgId={msgId} showMailboxEvent={showMailbox}/>
         ) : null }
