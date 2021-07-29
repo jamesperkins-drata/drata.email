@@ -12,6 +12,7 @@ const Mailbox = (props) => {
     const [messages,setMessages] = useState(null)
 
     const getMailbox = (e) => {
+        setMessages(null)
         if(e){
         e.preventDefault();
         }
@@ -28,16 +29,19 @@ const Mailbox = (props) => {
       };
 
     useEffect(() => {
-        axios
-        .get(config.resourceServer.endpoint +"/mail/"+props.mailbox+"@"+props.domain, {
-          headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() },
-        })
-        .then((data)=>{
-            setMessages(data.data.messages);
-        })
-        .catch((error)=> {
-          console.error(error)
-        })
+        setMessages(null)
+        if(props.mailbox){
+            axios
+            .get(config.resourceServer.endpoint +"/mail/"+props.mailbox+"@"+props.domain, {
+            headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() },
+            })
+            .then((data)=>{
+                setMessages(data.data.messages);
+            })
+            .catch((error)=> {
+            console.error(error)
+            })
+        }
     }, [props.mailbox, props.domain, oktaAuth])
 
     return (

@@ -9,14 +9,15 @@ import config from './config'
 const Home = () => {
   const {authState, oktaAuth} = useOktaAuth();
   const [userInfo, setUserInfo] = useState(null);
+
   const [active, setActive] = useState('MAILBOX')
+  const [mailboxInput, setMailboxInput] = useState('')
+
   const [mailbox, setMailbox] = useState("")
   const [msgId, setMsgID] = useState("")
 
   const domain = "atko.email"
-  const handleChange = (e) => setMailbox(e.target.value);
-
-
+  const changeMailbox = (e) => setMailbox(mailboxInput);
 
   const getMail = (event) => {
     setMsgID(event.target.id)
@@ -33,7 +34,9 @@ const Home = () => {
     } else {
       oktaAuth.getUser().then((info) => {
         setUserInfo(info);
-        setMailbox(info.email.split('@')[0])
+        var val = info.email.split('@')[0]
+        setMailboxInput(val)
+        setMailbox(val)
       })
     }
   }, [authState, oktaAuth]);
@@ -42,6 +45,8 @@ const Home = () => {
       <div>Loading...</div>
     );
   }
+
+ 
 
 
   return (
@@ -54,11 +59,11 @@ const Home = () => {
           <div>
               <Icon name="mail" size='large' />
               <span>
-                <Input id="mailbox" name="mailbox" placeholder='' onChange={handleChange} value={mailbox}/>
+                <Input id="mailbox" name="mailbox" placeholder='' value={mailboxInput} onInput={e => setMailboxInput(e.target.value)}/>
                 <b style={{marginLeft:'.25rem', marginRight:'.25rem'}}>@</b>
                 <Input disabled value={domain}></Input> 
               </span>
-              <Button fitted positive animated onClick={showMailbox} style={{marginLeft:'.25rem', marginTop:'-.3rem'}}>
+              <Button fitted positive animated onClick={changeMailbox} style={{marginLeft:'.25rem', marginTop:'-.3rem'}}>
                   <Button.Content visible>GO</Button.Content>
                   <Button.Content hidden>
                       <Icon name='arrow right' />
