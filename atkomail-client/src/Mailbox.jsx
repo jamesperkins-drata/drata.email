@@ -48,7 +48,7 @@ const Mailbox = (props) => {
         <Container padded>
             {messages ? (
                 <Container>
-                    <div>{props.mailbox}@{props.domain} has {messages.length} message(s)</div>
+                    <div>{props.mailbox}@{props.domain} has {messages.length} message(s) <Icon link name="sync" onClick={getMailbox}></Icon></div>
                     
                     <List divided relaxed>
                         {messages.map((msg) =>
