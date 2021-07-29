@@ -27,6 +27,18 @@ const Mailbox = (props) => {
           console.error(error)
         })
       };
+    
+    
+    const deleteMail = (e) => {
+        axios
+        .delete(config.resourceServer.endpoint +"/mail/"+e.target.id, {
+          headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() },
+        })
+        .then((data)=>{
+            getMailbox()
+        })
+        .catch((error)=> {console.error(error)})
+    };
 
     useEffect(() => {
         setMessages(null)
@@ -58,7 +70,7 @@ const Mailbox = (props) => {
                                 <List.Header as='a' onClick={props.getMailEvent} id={msg.id} >{msg.from.value[0].name} : {msg.subject}</List.Header>
                                 <List.Description as='a'><ReactTimeAgo date={msg.date} locale="en-US"/></List.Description>
                             </List.Content>
-                            <List.Icon verticalAlign='middle'><Button onClick="" color='red'><Icon color='white' fitted name='trash'></Icon></Button></List.Icon>
+                            <List.Icon verticalAlign='middle'><Button onClick={deleteMail} id={msg.id} color='red'><Icon color='white' fitted name='trash'></Icon></Button></List.Icon>
                             </List.Item> 
                         )}
                     </List>
