@@ -3,6 +3,7 @@ import { useOktaAuth } from '@okta/okta-react';
 import axios from 'axios'
 import config from './config'
 import { Icon, Container, Button} from 'semantic-ui-react';
+import ReactTimeAgo from 'react-time-ago'
 import ReactHtmlParser from 'react-html-parser'; 
 
 const MailRender = (props) => {
@@ -45,6 +46,7 @@ const MailRender = (props) => {
                     <div><b>To:</b> {ReactHtmlParser (msg.to.html)}</div>
                     <div><b>From:</b> {ReactHtmlParser (msg.from.html)}</div>
                     <div><b>Subject:</b>{msg.subject}</div>
+                    <div><b>Date:</b><ReactTimeAgo date={msg.date} locale="en-US"/> ({msg.date})</div>
                     <div> { ReactHtmlParser (msg.html) } </div>
                 </div>
             ) : (
