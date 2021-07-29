@@ -24,6 +24,7 @@ const Home = () => {
   }
 
   const showMailbox = ()=> {
+    setActive(null)
     setActive('MAILBOX')
   }
 
