@@ -42,7 +42,7 @@ const Mailbox = (props) => {
 
     return (
         <Container padded>
-            {props.messages ? (
+            {messages ? (
                 <Container>
                     <div>{props.mailbox}@{props.domain} has {props.messages.length} message(s)</div>
                     
