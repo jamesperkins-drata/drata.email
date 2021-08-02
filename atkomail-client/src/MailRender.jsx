@@ -45,8 +45,8 @@ const MailRender = (props) => {
                 <div>
                     <div><b>To:</b> {ReactHtmlParser (msg.to.html)}</div>
                     <div><b>From:</b> {ReactHtmlParser (msg.from.html)}</div>
-                    <div><b>Subject:</b>{msg.subject}</div>
-                    <div><b>Date:</b><ReactTimeAgo date={msg.date} locale="en-US"/> ({msg.date})</div>
+                    <div><b>Subject:</b> {msg.subject}</div>
+                    <div><b>Date:</b> <ReactTimeAgo date={msg.date} locale="en-US"/> ({msg.date})</div>
                     <div> { ReactHtmlParser (msg.html) } </div>
                 </div>
             ) : (

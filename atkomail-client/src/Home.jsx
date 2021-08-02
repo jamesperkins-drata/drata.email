@@ -3,8 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { Icon, Input, Button, Divider, Grid, GridRow} from 'semantic-ui-react';
 import MailRender from './MailRender';
 import Mailbox from './Mailbox';
-import axios from 'axios'
-import config from './config'
 
 const Home = () => {
   const {authState, oktaAuth} = useOktaAuth();
@@ -17,7 +15,10 @@ const Home = () => {
   const [msgId, setMsgID] = useState("")
 
   const domain = "atko.email"
-  const changeMailbox = (e) => setMailbox(mailboxInput);
+  const changeMailbox = (e) => {
+    setMailbox(mailboxInput);
+    showMailbox()
+  }
 
   const getMail = (event) => {
     setMsgID(event.target.id)
@@ -45,9 +46,6 @@ const Home = () => {
       <div>Loading...</div>
     );
   }
-
- 
-
 
   return (
     <GridRow>
