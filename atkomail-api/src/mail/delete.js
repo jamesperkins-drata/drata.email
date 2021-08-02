@@ -29,7 +29,7 @@ const baseHandler = async (event) => {
 const handler = middy(baseHandler)
 .use(cors({
     credentials: true,
-    origins: process.env.ORIGINS
+    origins: process.env.ORIGINS.split(' ')
 }))
 
 module.exports = {handler}
