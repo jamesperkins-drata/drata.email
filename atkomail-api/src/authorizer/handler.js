@@ -5,8 +5,8 @@ const baseVerifier = new OktaJwtVerifier({
     issuer: process.env.ISSUER,
 });
 
-exports.auth = (event, context) => {
-    baseVerifier.verifyAccessToken(parseTokenFromEvent(event), process.env.AUDIENCE)
+exports.auth = async (event, context) => {
+    await baseVerifier.verifyAccessToken(parseTokenFromEvent(event), process.env.AUDIENCE)
     .then((jwt) => {
         context.succeed(
             generateAuthResponse(jwt.claims.sub, 'Allow',  event.methodArn))
