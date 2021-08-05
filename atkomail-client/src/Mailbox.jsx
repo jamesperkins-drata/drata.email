@@ -50,6 +50,22 @@ const Mailbox = (props) => {
             .then((data)=>{ setMessages(data.data.messages) })
             .catch((error)=> { Sentry.captureException(error) })
         }
+        const interval = setInterval(() => {
+            if(props.mailbox){
+                axios
+                .get(config.resourceServer.endpoint +"/mail/"+props.mailbox+"@"+props.domain, {
+                headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() },
+                })
+                .then((data)=>{
+                    setMessages(data.data.messages);
+                })
+                .catch((error)=> {
+                    clearInterval(interval)
+                    console.error(error)
+                })
+            }
+          }, 10000);
+        return () => clearInterval(interval);
     }, [props.mailbox, props.domain, oktaAuth])
 
     return (
