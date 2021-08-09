@@ -8,11 +8,28 @@ const baseVerifier = new OktaJwtVerifier({
 exports.auth = async (event, context) => {
     await baseVerifier.verifyAccessToken(parseTokenFromEvent(event), process.env.AUDIENCE)
     .then((jwt) => {
-        context.succeed(
-            generateAuthResponse(jwt.claims.sub, 'Allow',  event.methodArn))
+        console.log(event.methodArn)
+        const domains = jwt.claims.maildomains
+        if(domains && domains.length > 0){
+            const gatewayPath = event.methodArn.split(':')[5]
+            var mailbox = gatewayPath.split('/')[4]
+            var mailDomain = mailbox.split('@')[1]
+            if(domains.includes("mailbox:"+mailDomain)){
+                context.succeed(
+                generateAuthResponse(jwt.claims.sub, 'Allow',  event.methodArn))
+            } else{
+                console.error("No matching mail domain found.")
+                context.fail('Unauthorized')
+            }
+        }
+        else {
+            console.error("No mail domains available.")
+            context.fail('Unauthorized')
+        }
     })
-    .catch(() => {
-        console.log("token failed validation")
+    .catch((err) => {
+        console.error("token failed validation")
+        console.error(error)
         context.fail('Unauthorized')
     });
 };
