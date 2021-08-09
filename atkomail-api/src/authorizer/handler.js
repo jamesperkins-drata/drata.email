@@ -8,7 +8,6 @@ const baseVerifier = new OktaJwtVerifier({
 exports.auth = async (event, context) => {
     await baseVerifier.verifyAccessToken(parseTokenFromEvent(event), process.env.AUDIENCE)
     .then((jwt) => {
-        console.log(event.methodArn)
         const domains = jwt.claims.maildomains
         if(domains && domains.length > 0){
             const gatewayPath = event.methodArn.split(':')[5]

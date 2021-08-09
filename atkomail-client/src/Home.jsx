@@ -66,6 +66,7 @@ const Home = () => {
         <Menu.Item fluid>
           <Switcher changeMailboxEvent={changeMailbox}></Switcher>
         </Menu.Item>
+        <Menu.Item position='right' href="https://oktawiki.atlassian.net/wiki/spaces/ESE/pages/2309622791/Atko.email">Help</Menu.Item>
         {authState.isAuthenticated && (
               <Menu.Item position='right' onClick={logout}>Logout</Menu.Item>
             )}
