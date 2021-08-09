@@ -2,6 +2,7 @@ const middy = require('@middy/core')
 const cors = require('@middy/http-cors')
 const simpleParser = require('mailparser').simpleParser;
 const AWS = require('aws-sdk');
+var md5 = require("md5"); 
 var s3 = new AWS.S3();
 
 var bucketName = process.env.BUCKET;
@@ -38,6 +39,7 @@ const baseHandler = async (event) => {
                 var mail = {
                     id: element.Key,
                     from: parsed.from,
+                    avatar: 'https://www.gravatar.com/avatar/'+md5(parsed.from.value[0].address)+'?d=mp',
                     date: parsed.date,
                     subject: parsed.subject,
                     attachmentCount: parsed.attachments.length

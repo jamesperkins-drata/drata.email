@@ -1,22 +1,24 @@
 import { useOktaAuth } from '@okta/okta-react';
 import React, { useState, useEffect } from 'react';
-import { Icon, Input, Button, Divider, Grid, GridRow} from 'semantic-ui-react';
+import { Divider, Image, Header, Menu, Container} from 'semantic-ui-react';
 import MailRender from './MailRender';
 import Mailbox from './Mailbox';
+import Switcher from './Switcher';
+import './Home.css'
 
 const Home = () => {
   const {authState, oktaAuth} = useOktaAuth();
   const [userInfo, setUserInfo] = useState(null);
 
   const [active, setActive] = useState('MAILBOX')
-  const [mailboxInput, setMailboxInput] = useState('')
 
   const [mailbox, setMailbox] = useState("")
   const [msgId, setMsgID] = useState("")
 
   const domain = "atko.email"
   const changeMailbox = (e) => {
-    setMailbox(mailboxInput);
+    console.log(e)
+    setMailbox(e);
     showMailbox()
   }
 
@@ -28,6 +30,15 @@ const Home = () => {
   const showMailbox = ()=> {
     setActive('MAILBOX')
   }
+  const login = async () => oktaAuth.signInWithRedirect();
+
+  const logout = async () => {
+    try {
+      await oktaAuth.signOut();
+    } catch (err) {
+        throw err;
+    }
+  };
 
   useEffect(() => {
     if (!authState || !authState.isAuthenticated) {
@@ -36,7 +47,6 @@ const Home = () => {
       oktaAuth.getUser().then((info) => {
         setUserInfo(info);
         var val = info.email.split('@')[0]
-        setMailboxInput(val)
         setMailbox(val)
       })
     }
@@ -48,37 +58,28 @@ const Home = () => {
   }
 
   return (
-    <GridRow>
-      <Grid padded>
-      <Grid.Row color='grey' centered >
-        <Grid.Column centered textAlign='center'>
-          <h2>Simple demonstration emails</h2>
-          <p>Collect email from any address under a domain.</p>
-          <div>
-              <Icon name="mail" size='large' />
-              <span>
-                <Input id="mailbox" name="mailbox" placeholder='' value={mailboxInput} onInput={e => setMailboxInput(e.target.value)}/>
-                <b style={{marginLeft:'.25rem', marginRight:'.25rem'}}>@</b>
-                <Input disabled value={domain}></Input> 
-              </span>
-              <Button fitted positive animated onClick={changeMailbox} style={{marginLeft:'.25rem', marginTop:'-.3rem'}}>
-                  <Button.Content visible>GO</Button.Content>
-                  <Button.Content hidden>
-                      <Icon name='arrow right' />
-                  </Button.Content>
-              </Button>
-          </div>
-          <p>Any email will be automatically deleted after 24 hours.</p>
-        </Grid.Column> 
-      </Grid.Row>
-      </Grid>
-      <Divider hidden />
-        {active === 'MAILBOX' ? (
-          <Mailbox mailbox={mailbox} domain={domain} getMailEvent={getMail}/>
-        ) : active === 'MAIL' ? (
-          <MailRender msgId={msgId} showMailboxEvent={showMailbox}/>
-        ) : null }
-    </GridRow>
+    <Container fluid>
+      <Menu borderless fluid >
+        <Menu.Item header as='a' href='/'><Header as='h2' className='brandText appName'>
+            <Image src={'./favicon.png'} size='mini'  verticalAlign='middle'  />ATKO.email
+          </Header></Menu.Item>
+        <Menu.Item fluid>
+          <Switcher changeMailboxEvent={changeMailbox}></Switcher>
+        </Menu.Item>
+        {authState.isAuthenticated && (
+              <Menu.Item position='right' onClick={logout}>Logout</Menu.Item>
+            )}
+            {!authState.isPending && !authState.isAuthenticated && (
+              <Menu.Item position='right' onClick={login}>Login</Menu.Item>
+            )}
+      </Menu>
+        <Divider hidden />
+          {active === 'MAILBOX' ? (
+            <Mailbox mailbox={mailbox} domain={domain} getMailEvent={getMail}/>
+          ) : active === 'MAIL' ? (
+            <MailRender msgId={msgId} showMailboxEvent={showMailbox}/>
+          ) : null }
+    </Container>
   );
 };
 export default Home;

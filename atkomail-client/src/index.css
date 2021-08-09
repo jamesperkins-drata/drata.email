@@ -5,9 +5,25 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color: rgb(33, 33, 38);
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.brandColor {
+  background-color: #00297A !important;
+  color: white;
+}
+
+.brandText {
+  color: #00297A !important;
+}
+
+.topNav {
+  border-bottom-color: rgb(215, 215, 220);
+  border-bottom-style: solid;
+  border-bottom-width: 1px
 }

@@ -1,0 +1,7 @@
+.ui.inverted.button {
+    box-shadow: none !important;
+}
+
+.ui.inverted.button:hover {
+    box-shadow: none !important;
+}
