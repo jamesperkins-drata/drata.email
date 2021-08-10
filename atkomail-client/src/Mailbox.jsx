@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useOktaAuth } from '@okta/okta-react';
-import { Icon, Container, List, Button, Dimmer, Loader,Image } from 'semantic-ui-react';
+import { Icon, Container, List, Button, Dimmer, Loader,Image, Grid, GridColumn, Popup } from 'semantic-ui-react';
 import ReactTimeAgo from 'react-time-ago'
 import axios from 'axios'
 import config from './config'
@@ -64,7 +64,8 @@ const Mailbox = (props) => {
                     <div>{props.mailbox}@{props.domain} has {messages.length} {messages.length === 1 ?(<span>message</span>):(<span>messages</span>)} <Icon link name="sync" onClick={getMailbox}></Icon></div>
                     
                     <List divided relaxed>
-                        {messages.map((msg) =>
+                    {messages.length != 0 ? (
+                        messages.map((msg) =>
                             <List.Item key={msg.id} >
 
                             <Image src={msg.avatar} avatar size='mini'/>   
@@ -80,6 +81,18 @@ const Mailbox = (props) => {
                             </List.Content>
                             
                             </List.Item> 
+                        ))
+                        :
+                        (                           
+                            <Grid columns={2} divided>
+                            <Grid.Row>
+                                <GridColumn width={2}><Icon name="paper plane outline" size='huge'/></GridColumn>
+                                <GridColumn>
+                                    <p>This inbox is currently empty.</p>
+                                    <p>Have an email sent to (<Popup content='Click to copy' trigger={<b className="address" onClick={()=>{navigator.clipboard.writeText(props.mailbox+'@'+props.domain)}}>{props.mailbox}@{props.domain}</b>} />) or any inbox you want above to view it here for up to 24 hours.</p>
+                                </GridColumn>                               
+                            </Grid.Row>
+                            </Grid>
                         )}
                     </List>
                 </Container>
