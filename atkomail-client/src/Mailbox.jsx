@@ -86,7 +86,7 @@ const Mailbox = (props) => {
                         (                           
                             <Grid columns={2} divided>
                             <Grid.Row>
-                                <GridColumn width={2}><Icon name="paper plane outline" size='huge'/></GridColumn>
+                                <GridColumn textAlign='center' width={2}><Icon name="paper plane outline" size='huge'/></GridColumn>
                                 <GridColumn>
                                     <p>This inbox is currently empty.</p>
                                     <p>Have an email sent to (<Popup content='Click to copy' trigger={<b className="address" onClick={()=>{navigator.clipboard.writeText(props.mailbox+'@'+props.domain)}}>{props.mailbox}@{props.domain}</b>} />) or any inbox you want above to view it here for up to 24 hours.</p>
