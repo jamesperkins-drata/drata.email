@@ -2,7 +2,6 @@ import React from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { OktaAuth, toRelativeUrl } from '@okta/okta-auth-js';
 import { Security, SecureRoute, LoginCallback } from '@okta/okta-react';
-import { Grid } from 'semantic-ui-react';
 import config from './config';
 import Home from './Home';
 

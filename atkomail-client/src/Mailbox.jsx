@@ -18,7 +18,7 @@ const Mailbox = (props) => {
         e.preventDefault();
         }
         axios
-        .get(config.resourceServer.endpoint +"/mail/"+props.mailbox+"@"+props.domain, {
+        .get(config.resourceServer.endpoint +"/mail/"+props.mailbox, {
           headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() },
         })
         .then((data)=>{
@@ -45,7 +45,7 @@ const Mailbox = (props) => {
         setMessages(null)
         if(props.mailbox){
             axios
-            .get(config.resourceServer.endpoint +"/mail/"+props.mailbox+"@"+props.domain, {
+            .get(config.resourceServer.endpoint +"/mail/"+props.mailbox, {
             headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() },
             })
             .then((data)=>{
@@ -61,10 +61,10 @@ const Mailbox = (props) => {
         <Container padded>
             {messages ? (
                 <Container>
-                    <div>{props.mailbox}@{props.domain} has {messages.length} {messages.length === 1 ?(<span>message</span>):(<span>messages</span>)} <Icon link name="sync" onClick={getMailbox}></Icon></div>
+                    <div>{props.mailbox} has {messages.length} {messages.length === 1 ?(<span>message</span>):(<span>messages</span>)} <Icon link name="sync" onClick={getMailbox}></Icon></div>
                     
                     <List divided relaxed>
-                    {messages.length != 0 ? (
+                    {messages.length !== 0 ? (
                         messages.map((msg) =>
                             <List.Item key={msg.id} >
 
@@ -89,7 +89,7 @@ const Mailbox = (props) => {
                                 <GridColumn textAlign='center' width={2}><Icon name="paper plane outline" size='huge'/></GridColumn>
                                 <GridColumn>
                                     <p>This inbox is currently empty.</p>
-                                    <p>Have an email sent to (<Popup content='Click to copy' trigger={<b className="address" onClick={()=>{navigator.clipboard.writeText(props.mailbox+'@'+props.domain)}}>{props.mailbox}@{props.domain}</b>} />) or any inbox you want above to view it here for up to 24 hours.</p>
+                                    <p>Have an email sent to (<Popup content='Click to copy' trigger={<b className="address" onClick={()=>{navigator.clipboard.writeText(props.mailbox)}}>{props.mailbox}</b>} />) or any inbox you want above to view it here for up to 24 hours.</p>
                                 </GridColumn>                               
                             </Grid.Row>
                             </Grid>

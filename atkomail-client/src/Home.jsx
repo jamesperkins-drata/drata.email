@@ -15,9 +15,7 @@ const Home = () => {
   const [mailbox, setMailbox] = useState("")
   const [msgId, setMsgID] = useState("")
 
-  const domain = "atko.email"
   const changeMailbox = (e) => {
-    console.log(e)
     setMailbox(e);
     showMailbox()
   }
@@ -47,7 +45,7 @@ const Home = () => {
       oktaAuth.getUser().then((info) => {
         setUserInfo(info);
         var val = info.email.split('@')[0]
-        setMailbox(val)
+        setMailbox(val+"@atko.email")
       })
     }
   }, [authState, oktaAuth]);
@@ -76,7 +74,7 @@ const Home = () => {
       </Menu>
         <Divider hidden />
           {active === 'MAILBOX' ? (
-            <Mailbox mailbox={mailbox} domain={domain} getMailEvent={getMail}/>
+            <Mailbox mailbox={mailbox} getMailEvent={getMail}/>
           ) : active === 'MAIL' ? (
             <MailRender msgId={msgId} showMailboxEvent={showMailbox}/>
           ) : null }

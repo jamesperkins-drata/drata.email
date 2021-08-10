@@ -8,13 +8,13 @@ const Switcher = (props) => {
     const {authState, oktaAuth} = useOktaAuth();
     const [userInfo, setUserInfo] = useState(null);
     const [mailbox, setMailbox] = useState("")
-  
+    const [domain, setDomain] = useState("atko.email")
     const [domainOptions,setDomainOptions] = useState([])
   
-    const domain = "atko.email"
+
 
     function changeMailbox(){
-        props.changeMailboxEvent(mailbox)
+        props.changeMailboxEvent(mailbox+"@"+domain)
     }  
 
     useEffect(() => {
@@ -26,9 +26,9 @@ const Switcher = (props) => {
                 //show the user any available domains
                 var domains = []
                 info.maildomains.forEach(element => {
-                    console.log(element)
                     var domain = element.split(':')[1]
                     domains.push({key: domain, text: domain, value: domain})
+
                 });
                 setDomainOptions(domains)
                 //default the user to a mailbox with their sub
@@ -61,6 +61,7 @@ const Switcher = (props) => {
                 control={Select}
                 options={domainOptions}
                 value={domain}
+                onChange={(e,{value})=> setDomain(value)}
                 />
                 </GridColumn>
                 <GridColumn width={2} className="switcherCol">
