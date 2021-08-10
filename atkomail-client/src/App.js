@@ -17,7 +17,20 @@ const App = () => {
     <Security oktaAuth={oktaAuth} restoreOriginalUri={restoreOriginalUri}>
       <Switch>
         <SecureRoute path="/" exact component={Home} />
-        <Route path="/login/callback" component={LoginCallback} />
+        <Route 
+          path="/login/callback"
+          component={LoginCallback} 
+          errorComponent={() => {
+            const id = setTimeout(() => {
+              localStorage.clear()
+              window.location = '/'
+            }, 2000);
+            oktaAuth.signOut().then(() => {
+              clearTimeout(id);
+            });
+            return null;
+          }}
+        />
       </Switch>
     </Security>
   );
