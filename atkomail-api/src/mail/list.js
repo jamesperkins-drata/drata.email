@@ -49,7 +49,9 @@ const baseHandler = async (event) => {
             return {
                 statusCode: 200,
                 body: JSON.stringify({
-                    messages: messages
+                    //reverse to place messages in latest first order
+                    //assumes mail id increments within a given mailbox
+                    messages: messages.reverse()
                 })
             }
         }
