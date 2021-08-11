@@ -26,7 +26,7 @@ const denyPayload = {
 
 module.exports.handler = async (event) => {
     var payload = JSON.parse(event.body)
-    if(payload.data.userProfile.email.endsWith('@okta.com')){
+    if(payload.data.userProfile.email.endsWith('@okta.com') || payload.data.userProfile.email.endsWith('@auth0.com')){
         return {
             statusCode: 200,
             body: JSON.stringify(acceptPayload)

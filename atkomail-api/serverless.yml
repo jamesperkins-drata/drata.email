@@ -8,6 +8,7 @@ provider:
   name: aws
   runtime: nodejs12.x
   lambdaHashingVersion: '20201221'
+  logRetentionInDays: 30
   environment:
     BUCKET: ${file(./config.${opt:stage, self:provider.stage, 'dev'}.json):bucket-name}
     ISSUER: ${file(./config.${opt:stage, self:provider.stage, 'dev'}.json):issuer-uri}
