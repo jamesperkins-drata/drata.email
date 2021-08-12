@@ -18,7 +18,7 @@ var bucketName = process.env.BUCKET;
 
 const baseHandler = async (event) => {
     logger.defaultMeta = {requestId: event.requestContext.requestId, principal: event.requestContext.authorizer.principalId};
-    logger.info("Request for "+event.pathParameters.email)
+    logger.info("List mail requested.", { mailbox: event.pathParameters.email})
     var listParams = {
         Bucket: bucketName, 
         Delimiter: '/',
