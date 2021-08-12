@@ -41,6 +41,17 @@ const Mailbox = (props) => {
         .catch((error)=> {console.error(error)})
     };
 
+    const deleteMailbox = () => {
+        axios
+        .delete(config.resourceServer.endpoint +"/mail/"+props.mailbox, {
+          headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() },
+        })
+        .then((data)=>{
+            getMailbox()
+        })
+        .catch((error)=> {console.error(error)})
+    };
+
     useEffect(() => {
         setMessages(null)
         if(props.mailbox){
@@ -61,7 +72,7 @@ const Mailbox = (props) => {
         <Container padded>
             {messages ? (
                 <Container>
-                    <div>{props.mailbox} has {messages.length} {messages.length === 1 ?(<span>message</span>):(<span>messages</span>)} <Icon link name="sync" onClick={getMailbox}></Icon></div>
+                    <div>{props.mailbox} has {messages.length} {messages.length === 1 ?(<span>message</span>):(<span>messages</span>)} <Icon link name="sync" onClick={getMailbox}></Icon><Icon link name="trash" onClick={deleteMailbox}></Icon></div>
                     
                     <List divided relaxed>
                     {messages.length !== 0 ? (
