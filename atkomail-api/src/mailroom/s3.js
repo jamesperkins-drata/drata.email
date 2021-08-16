@@ -23,7 +23,7 @@ module.exports.sort = async (event) => {
     var copyParams = {
         Bucket: bucketName, 
         CopySource: bucketName+"/"+sesNotification.mail.messageId, 
-        Key: sesNotification.mail.destination[0]+"/"+sesNotification.mail.messageId
+        Key: sesNotification.mail.destination[0]+"/"+Date.now()+"-"+Math.floor(Math.random() * 1000)
        };
 
     await s3.copyObject(copyParams).promise()
