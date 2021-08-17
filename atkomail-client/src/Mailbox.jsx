@@ -84,7 +84,7 @@ const Mailbox = (props) => {
                                 >{props.mailbox}</b>} />
                         &nbsp;has {messages.length} {messages.length === 1 ?(<span>message</span>):(<span>messages</span>)} 
                         <Button compact floated='right' onClick={getMailbox}><Icon link name="sync"></Icon>Refresh</Button>
-                        <Modal
+                        {messages.length !== 0 && <Modal
                             basic
                             onClose={() => setOpen(false)}
                             onOpen={() => setOpen(true)}
@@ -107,7 +107,7 @@ const Mailbox = (props) => {
                                 <Icon name='checkmark' /> Yes
                                 </Button>
                             </Modal.Actions>
-                        </Modal>
+                        </Modal>}
                     </div>
                     <Divider hidden />
                     <List divided relaxed>
