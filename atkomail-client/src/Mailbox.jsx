@@ -72,7 +72,19 @@ const Mailbox = (props) => {
         <Container padded>
             {messages ? (
                 <Container>
-                    <div>{props.mailbox} has {messages.length} {messages.length === 1 ?(<span>message</span>):(<span>messages</span>)} <Icon link name="sync" onClick={getMailbox}></Icon><Icon link name="trash" onClick={deleteMailbox}></Icon></div>
+                    <div>
+                        <Popup 
+                            content='Click to copy'
+                            trigger={
+                                <b className="address"
+                                    onClick={()=>{
+                                        navigator.clipboard.writeText(props.mailbox)
+                                        }}
+                                >{props.mailbox}</b>} />
+                        &nbsp;has {messages.length} {messages.length === 1 ?(<span>message</span>):(<span>messages</span>)} 
+                        <Button compact floated='right' onClick={getMailbox}><Icon link name="sync"></Icon>Refresh</Button>
+                        <Button compact floated='right' onClick={deleteMailbox}><Icon link name="trash"></Icon>Delete all</Button>
+                    </div>
                     
                     <List divided relaxed>
                     {messages.length !== 0 ? (
@@ -82,8 +94,8 @@ const Mailbox = (props) => {
                             <Image src={msg.avatar} avatar size='mini'/>   
                             <List.Content>
                                 <List.Header as='a' onClick={props.getMailEvent} id={msg.id} >{msg.subject}</List.Header>
-                                <List.Description as='a' onClick={props.getMailEvent}>{msg.from.value[0].name} ({msg.from.value[0].address})</List.Description>
-                                <List.Description as='a' onClick={props.getMailEvent}><ReactTimeAgo date={msg.date} locale="en-US"/></List.Description>
+                                <List.Description as='a' onClick={props.getMailEvent} id={msg.id}>{msg.from.value[0].name} ({msg.from.value[0].address})</List.Description>
+                                <List.Description as='a' onClick={props.getMailEvent} id={msg.id}><ReactTimeAgo date={msg.date} locale="en-US"/></List.Description>
                             </List.Content>
                             <List.Content floated='right'>
                                 <List.Icon verticalAlign='middle'>
