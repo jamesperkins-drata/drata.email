@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useOktaAuth } from '@okta/okta-react';
-import { Icon, Container, List, Button, Dimmer, Loader,Image, Grid, GridColumn, Popup } from 'semantic-ui-react';
+import { Icon, Container, List, Button, Dimmer, Loader,Image, Grid, GridColumn, Popup, Modal, Header, Divider } from 'semantic-ui-react';
 import ReactTimeAgo from 'react-time-ago'
 import axios from 'axios'
 import config from './config'
@@ -11,6 +11,7 @@ const Mailbox = (props) => {
 
     const {oktaAuth } = useOktaAuth();
     const [messages,setMessages] = useState(null)
+    const [open, setOpen] = React.useState(false)
 
     const getMailbox = (e) => {
         setMessages(null)
@@ -83,9 +84,32 @@ const Mailbox = (props) => {
                                 >{props.mailbox}</b>} />
                         &nbsp;has {messages.length} {messages.length === 1 ?(<span>message</span>):(<span>messages</span>)} 
                         <Button compact floated='right' onClick={getMailbox}><Icon link name="sync"></Icon>Refresh</Button>
-                        <Button compact floated='right' onClick={deleteMailbox}><Icon link name="trash"></Icon>Delete all</Button>
+                        <Modal
+                            basic
+                            onClose={() => setOpen(false)}
+                            onOpen={() => setOpen(true)}
+                            open={open}
+                            size='small'
+                            trigger={ <Button compact floated='right'><Icon link name="trash"></Icon>Delete all</Button>}
+                            >
+                            <Header icon>
+                                <Icon name='trash' />
+                                Delete all messages
+                            </Header>
+                            <Modal.Content>
+                                This will delete all messages in this inbox would you like to continue?
+                            </Modal.Content>
+                            <Modal.Actions>
+                                <Button color='red' inverted onClick={() => setOpen(false)}>
+                                <Icon name='remove' /> No
+                                </Button>
+                                <Button color='green' inverted onClick={() => {setOpen(false); deleteMailbox()}}>
+                                <Icon name='checkmark' /> Yes
+                                </Button>
+                            </Modal.Actions>
+                        </Modal>
                     </div>
-                    
+                    <Divider hidden />
                     <List divided relaxed>
                     {messages.length !== 0 ? (
                         messages.map((msg) =>

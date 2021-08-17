@@ -4,3 +4,10 @@
 .address:hover{
     cursor: pointer;
 }
+
+.ui.modal {
+    text-align: center !important;
+}
+.ui.modal > .actions {
+    text-align: center !important;
+}
