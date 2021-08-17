@@ -74,7 +74,7 @@ const baseHandler = async (event) => {
         }
     }
     catch(error){
-        console.error(error)
+        console.error("Unable to process list request",{error: error})
         return{
             status: 500,
             error: "Something failed, sorry."
