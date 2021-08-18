@@ -9,6 +9,8 @@ import ReactHtmlParser from 'react-html-parser';
 const MailRender = (props) => {
     const { oktaAuth } = useOktaAuth();
     const [msg,setMsg] = useState(null)
+    const [plainText, setPlainText] = useState(false)
+    const [hasHTML, setHasHTML] = useState(false)
 
     const deleteMail = (e) => {
         axios
@@ -28,6 +30,12 @@ const MailRender = (props) => {
         })
         .then((data)=>{
             setMsg(data.data);
+            if(!data.data.html) {
+                setPlainText(true)
+                setHasHTML(false)
+            } else {
+                setHasHTML(true)
+            }
         })
         .catch((error)=> {console.error(error)})
         return () => {
@@ -38,6 +46,13 @@ const MailRender = (props) => {
         <Container padded>
             <Container style={{paddingBottom:'20px'}}>
                 <Button onClick={props.showMailboxEvent}>Back to mailbox</Button>
+                {
+                    hasHTML && plainText ?
+                        (<Button onClick={()=>setPlainText(false)}>Show as HTML</Button>) 
+                    : hasHTML && plainText === false ?
+                        (<Button onClick={()=>setPlainText(true)}>Show as plaintext</Button>) 
+                    : null
+                }
                 <Button color='red' onClick={deleteMail}><Icon fitted name='trash' size='small'/></Button>
             </Container>
             {
@@ -47,7 +62,7 @@ const MailRender = (props) => {
                     <div><b>From:</b> {ReactHtmlParser (msg.from.html)}</div>
                     <div><b>Subject:</b> {msg.subject}</div>
                     <div><b>Date:</b> <ReactTimeAgo date={msg.date} locale="en-US"/> ({msg.date})</div>
-                    <div> { ReactHtmlParser (msg.html) } </div>
+                    {plainText ? (<div dangerouslySetInnerHTML={{ __html: msg.textAsHtml }} />) : (<div> { ReactHtmlParser (msg.html) } </div>)}
                 </div>
             ) : (
                 <Container>
