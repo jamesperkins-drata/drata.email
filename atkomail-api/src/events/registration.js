@@ -37,7 +37,7 @@ const denyPayload = {
 module.exports.handler = async (event) => {
    var payload = JSON.parse(event.body)
    if(payload.data.userProfile.email.endsWith('@okta.com') || payload.data.userProfile.email.endsWith('@auth0.com')){
-      console.info("Granted SSR."{address: payload.data.userProfile.email})
+      console.info("Granted SSR.",{address: payload.data.userProfile.email})
       return {
          statusCode: 200,
          body: JSON.stringify(acceptPayload)
