@@ -21,9 +21,9 @@ jobs:
         # uses: getsentry/action-release@744e4b262278339b79fb39c8922efcae71e98e39
         uses: getsentry/action-release@v1.1.6
         env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
-          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+          SENTRY_AUTH_TOKEN: '${{ secrets.SENTRY_AUTH_TOKEN }}'
+          SENTRY_ORG: '${{ secrets.SENTRY_ORG }}'
+          SENTRY_PROJECT: '${{ secrets.SENTRY_PROJECT }}'
         with:
           environment: atkomail
           # When the flag is set and the previous release commit was not found in the repository, will create a release with the default commits count instead of failing the command.
