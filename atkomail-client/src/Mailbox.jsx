@@ -5,6 +5,7 @@ import ReactTimeAgo from 'react-time-ago'
 import axios from 'axios'
 import config from './config'
 import './Mailbox.css'
+import * as Sentry from "@sentry/react";
 
 
 const Mailbox = (props) => {
@@ -15,57 +16,39 @@ const Mailbox = (props) => {
 
     const getMailbox = (e) => {
         setMessages(null)
-        if(e){
-        e.preventDefault();
-        }
-        axios
-        .get(config.resourceServer.endpoint +"/mail/"+props.mailbox, {
-          headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() },
-        })
-        .then((data)=>{
-            setMessages(data.data.messages);
-        })
-        .catch((error)=> {
-          console.error(error)
-        })
+        if(e){ e.preventDefault() }
+        axios.get(config.resourceServer.endpoint +"/mail/"+props.mailbox,
+            { headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() }}
+        )
+        .then((data)=>{ setMessages(data.data.messages) })
+        .catch((error)=> { Sentry.captureException(error) })
       };
     
     
     const deleteMail = (e) => {
-        axios
-        .delete(config.resourceServer.endpoint +"/mail/"+e.target.id, {
-          headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() },
-        })
-        .then((data)=>{
-            getMailbox()
-        })
-        .catch((error)=> {console.error(error)})
+        axios.delete(config.resourceServer.endpoint +"/mail/"+e.target.id,
+            { headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() }}
+        )
+        .then((data)=>{ getMailbox() })
+        .catch((error)=> { Sentry.captureException(error) })
     };
 
     const deleteMailbox = () => {
-        axios
-        .delete(config.resourceServer.endpoint +"/mail/"+props.mailbox, {
-          headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() },
-        })
-        .then((data)=>{
-            getMailbox()
-        })
-        .catch((error)=> {console.error(error)})
+        axios.delete(config.resourceServer.endpoint +"/mail/"+props.mailbox,
+            { headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() }}
+        )
+        .then((data)=>{ getMailbox() })
+        .catch((error)=> { Sentry.captureException(error) })
     };
 
     useEffect(() => {
         setMessages(null)
         if(props.mailbox){
-            axios
-            .get(config.resourceServer.endpoint +"/mail/"+props.mailbox, {
-            headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() },
-            })
-            .then((data)=>{
-                setMessages(data.data.messages);
-            })
-            .catch((error)=> {
-            console.error(error)
-            })
+            axios.get(config.resourceServer.endpoint +"/mail/"+props.mailbox,
+                { headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() }}
+            )
+            .then((data)=>{ setMessages(data.data.messages) })
+            .catch((error)=> { Sentry.captureException(error) })
         }
     }, [props.mailbox, props.domain, oktaAuth])
 

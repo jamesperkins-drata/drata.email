@@ -5,6 +5,7 @@ import MailRender from './MailRender';
 import Mailbox from './Mailbox';
 import Switcher from './Switcher';
 import './Home.css'
+import * as Sentry from "@sentry/react";
 
 const Home = () => {
   const {authState, oktaAuth} = useOktaAuth();
@@ -34,7 +35,7 @@ const Home = () => {
     try {
       await oktaAuth.signOut();
     } catch (err) {
-        throw err;
+      Sentry.captureException(err);
     }
   };
 

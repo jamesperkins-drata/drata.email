@@ -5,6 +5,7 @@ import config from './config'
 import { Icon, Container, Button} from 'semantic-ui-react';
 import ReactTimeAgo from 'react-time-ago'
 import ReactHtmlParser from 'react-html-parser'; 
+import * as Sentry from "@sentry/react";
 
 const MailRender = (props) => {
     const { oktaAuth } = useOktaAuth();
@@ -13,21 +14,17 @@ const MailRender = (props) => {
     const [hasHTML, setHasHTML] = useState(false)
 
     const deleteMail = (e) => {
-        axios
-        .delete(config.resourceServer.endpoint +"/mail/"+props.msgId, {
-          headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() },
-        })
-        .then((data)=>{
-            props.showMailboxEvent()
-        })
-        .catch((error)=> {console.error(error)})
+        axios.delete(config.resourceServer.endpoint +"/mail/"+props.msgId,
+            { headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() }}
+        )
+        .then((data)=>{ props.showMailboxEvent() })
+        .catch((error)=> {  Sentry.captureException(error) })
     };
 
     useEffect(() => {
-        axios
-        .get(config.resourceServer.endpoint +"/mail/"+props.msgId, {
-          headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() },
-        })
+        axios.get(config.resourceServer.endpoint +"/mail/"+props.msgId,
+            { headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() }}
+        )
         .then((data)=>{
             setMsg(data.data);
             if(!data.data.html) {
@@ -37,7 +34,7 @@ const MailRender = (props) => {
                 setHasHTML(true)
             }
         })
-        .catch((error)=> {console.error(error)})
+        .catch((error)=> { Sentry.captureException(error) })
         return () => {
         }
     }, [props.msgId, oktaAuth])
