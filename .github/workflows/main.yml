@@ -17,9 +17,8 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Sentry Release
-        # You may pin to the exact commit or the version.
-        # uses: getsentry/action-release@744e4b262278339b79fb39c8922efcae71e98e39
-        uses: getsentry/action-release@v1.1.6
+      - uses: actions/checkout@v2
+      - uses: getsentry/action-release@v1.1.6
         env:
           SENTRY_AUTH_TOKEN: '${{ secrets.SENTRY_AUTH_TOKEN }}'
           SENTRY_ORG: '${{ secrets.SENTRY_ORG }}'
