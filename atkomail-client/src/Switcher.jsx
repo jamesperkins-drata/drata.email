@@ -25,11 +25,16 @@ const Switcher = (props) => {
                 setUserInfo(info);
                 //show the user any available domains
                 var domains = []
-                info.maildomains.forEach(element => {
-                    var domain = element.split(':')[1]
-                    domains.push({key: domain, text: domain, value: domain})
+                if(info.maildomains){
+                    info.maildomains.forEach(element => {
+                        var domain = element.split(':')[1]
+                        domains.push({key: domain, text: domain, value: domain})
 
-                });
+                    });
+                }
+                else {
+                    domains.push({key: 'atko.email', text: 'atko.email', value: 'atko.email'})
+                }
                 setDomainOptions(domains)
                 //default the user to a mailbox with their sub
                 var val = info.email.split('@')[0]

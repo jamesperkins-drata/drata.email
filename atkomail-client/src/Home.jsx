@@ -42,9 +42,11 @@ const Home = () => {
   useEffect(() => {
     if (!authState || !authState.isAuthenticated) {
       setUserInfo(null);
+      Sentry.configureScope(scope => scope.setUser(null));
     } else {
       oktaAuth.getUser().then((info) => {
         setUserInfo(info);
+        Sentry.setUser({ email: info.email });
         var val = info.email.split('@')[0]
         setMailbox(val+"@atko.email")
       })
