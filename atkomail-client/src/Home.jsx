@@ -34,6 +34,7 @@ const Home = () => {
   const logout = async () => {
     try {
       await oktaAuth.signOut();
+      Sentry.configureScope(scope => scope.setUser(null));
     } catch (err) {
       Sentry.captureException(err);
     }
