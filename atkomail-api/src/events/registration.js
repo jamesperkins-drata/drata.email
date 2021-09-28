@@ -24,7 +24,7 @@ const denyPayload = {
        "errorSummary":"Errors were found in the user profile",
        "errorCauses":[
           {
-             "errorSummary":"Please provide an okta email address.",
+             "errorSummary":"Please provide an Okta or Auth0 email address.",
              "reason":"INVALID_EMAIL_DOMAIN",
              "locationType":"body",
              "location":"data.userProfile.login",
