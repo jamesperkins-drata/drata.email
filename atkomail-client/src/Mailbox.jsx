@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useOktaAuth } from '@okta/okta-react';
 import { Icon, Container, List, Button, Dimmer, Loader,Image, Grid, GridColumn, Popup, Modal, Header, Divider } from 'semantic-ui-react';
 import ReactTimeAgo from 'react-time-ago'
@@ -6,6 +6,7 @@ import axios from 'axios'
 import config from './config'
 import './Mailbox.css'
 import * as Sentry from "@sentry/react";
+import useWebSocket, { ReadyState } from 'react-use-websocket';
 
 
 const Mailbox = (props) => {
@@ -13,7 +14,24 @@ const Mailbox = (props) => {
     const {oktaAuth } = useOktaAuth();
     const [messages,setMessages] = useState(null)
     const [open, setOpen] = React.useState(false)
+    const didUnmount = useRef(false);
 
+    const [socketUrl, setSocketUrl] = useState('wss://1uoy7q9beh.execute-api.us-east-1.amazonaws.com/dev');
+
+    const {
+        sendMessage,
+        } = useWebSocket(socketUrl,
+            {
+                onMessage: (message) => { console.log("message"); console.log(message) },
+                onOpen: (message) => { console.log("open"); console.log(message) },
+                onClose: (message) => { console.log("close"); console.log(message) },
+                onError: (message) => { console.log("error"); console.log(message) },
+                shouldReconnect: (closeEvent) => { return didUnmount.current === false },
+                reconnectAttempts: 10,
+                reconnectInterval: 3000
+            }
+        );
+    
     const getMailbox = (e) => {
         setMessages(null)
         if(e){ e.preventDefault() }
@@ -43,30 +61,22 @@ const Mailbox = (props) => {
 
     useEffect(() => {
         setMessages(null)
+        didUnmount.current = true;
         if(props.mailbox){
+            sendMessage(JSON.stringify({mailbox: props.mailbox}))
             axios.get(config.resourceServer.endpoint +"/mail/"+props.mailbox,
                 { headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() }}
             )
             .then((data)=>{ setMessages(data.data.messages) })
             .catch((error)=> { Sentry.captureException(error) })
         }
-        const interval = setInterval(() => {
-            if(props.mailbox){
-                axios
-                .get(config.resourceServer.endpoint +"/mail/"+props.mailbox+"@"+props.domain, {
-                headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() },
-                })
-                .then((data)=>{
-                    setMessages(data.data.messages);
-                })
-                .catch((error)=> {
-                    clearInterval(interval)
-                    console.error(error)
-                })
-            }
-          }, 10000);
-        return () => clearInterval(interval);
     }, [props.mailbox, props.domain, oktaAuth])
+
+    useEffect(() => {
+        return () => {
+          console.log("cleaned up");
+        };
+      }, []);
 
     return (
         <Container padded>

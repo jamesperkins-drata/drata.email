@@ -2,6 +2,8 @@ var AWS = require('aws-sdk');
 var s3 = new AWS.S3();
 const winston = require("winston");
 var bucketName = process.env.BUCKET;
+const notificationsDB = new AWS.DynamoDB.DocumentClient()
+const apiGateway = new AWS.ApiGatewayManagementApi({endpoint: "1uoy7q9beh.execute-api.us-east-1.amazonaws.com/dev"})
 
 const logger = winston.createLogger({
     level: process.env.LOG_LEVEL || 'info',
@@ -34,8 +36,30 @@ module.exports.sort = async (event) => {
             Key: sesNotification.mail.messageId, 
         }
         await s3.deleteObject(deleteParams).promise()
+        
     } catch (error) {
-        console.error("Unable to sort mail", {error: error})
+        logger.error("Unable to sort mail", {error: error})
     }
 
+    try{
+        //update any clients waiting on this box
+        var params = {
+            TableName: process.env.DYNAMO_TABLE_NAME,
+            FilterExpression: "#mb = :mailbox",
+            ExpressionAttributeNames:{
+                "#mb": "mailbox"
+            },
+            ExpressionAttributeValues: {
+                ":mailbox": sesNotification.mail.destination[0]
+            }
+        }
+        
+        var response = await notificationsDB.scan(params).promise()
+        response.Items.forEach(async function (item){
+            logger.info(item)
+            await apiGateway.postToConnection({ConnectionId:item.connectionId,Data:"refresh your box"}).promise()
+        })
+    } catch (error) {
+        console.error("Unable to notify of mail changes", {error: error})
+    }
 }

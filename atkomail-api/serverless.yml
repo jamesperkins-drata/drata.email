@@ -9,12 +9,17 @@ provider:
   runtime: nodejs12.x
   lambdaHashingVersion: '20201221'
   logRetentionInDays: 30
+  websocketsApiName: atkomail-websocket
+  websocketsApiRouteSelectionExpression: $request.body.action 
+  logs:
+    websocket: true
   environment:
     BUCKET: ${file(./config.${opt:stage, self:provider.stage, 'dev'}.json):bucket-name}
     ISSUER: ${file(./config.${opt:stage, self:provider.stage, 'dev'}.json):issuer-uri}
     AUDIENCE: ${file(./config.${opt:stage, self:provider.stage, 'dev'}.json):audience}
     ORIGINS: ${file(./config.${opt:stage, self:provider.stage, 'dev'}.json):origins}
     FIXED_AUTH_SECRET: ${file(./config.${opt:stage, self:provider.stage, 'dev'}.json):fixed-secret}
+    DYNAMO_TABLE_NAME: { "Ref": "notifications" }
   iam:
     role:
       statements:
@@ -24,7 +29,15 @@ provider:
             - 's3:GetObject'
             - 's3:PutObject'
             - 's3:DeleteObject'
-          Resource: "arn:aws:s3:::atkoemail"
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:DeleteItem
+            - dynamodb:UpdateItem
+          Resource: 
+            - "arn:aws:s3:::atkoemail"
+            - { "Fn::GetAtt": ["notifications", "Arn"] }
 
 resources:
   Resources:
@@ -64,6 +77,19 @@ resources:
         ResponseType: RESOURCE_NOT_FOUND
         RestApiId:
           Ref: 'ApiGatewayRestApi'
+    notifications:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: connectionId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: connectionId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
                           
 
 functions:
@@ -131,4 +157,18 @@ functions:
           authorizer:
             name: fixed
             identitySource: method.request.header.Authorization
+
+  # Websocket
+  connectionHandler:
+    handler: src/websocket/connectionHandler.handler
+    events:
+      - websocket:
+          route: $connect
+          #authorizer: auth
+      - websocket:
+          route: $disconnect
+  defaultHandler:
+    handler: src/websocket/defaultHandler.handler
+    events:
+      - websocket: $default #simple event definition without extra route property
 
