@@ -15,7 +15,7 @@ code {
 
 .brandColor {
   background-color: #00297A !important;
-  color: white;
+  color: white !important;
 }
 
 .brandText {
@@ -26,4 +26,8 @@ code {
   border-bottom-color: rgb(215, 215, 220);
   border-bottom-style: solid;
   border-bottom-width: 1px
+}
+
+.actions {
+  margin-right: 35px !important;
 }

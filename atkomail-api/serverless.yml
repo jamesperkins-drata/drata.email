@@ -20,6 +20,7 @@ provider:
     ORIGINS: ${file(./config.${opt:stage, self:provider.stage, 'dev'}.json):origins}
     FIXED_AUTH_SECRET: ${file(./config.${opt:stage, self:provider.stage, 'dev'}.json):fixed-secret}
     DYNAMO_TABLE_NAME: { "Ref": "notifications" }
+    WEBSOCKET_API_ENDPOINT: !Join ['', [!Ref WebsocketsApi, '.execute-api.', "${self:provider.region}", '.amazonaws.com/', "${opt:stage, self:provider.stage, 'dev'}"]]
   iam:
     role:
       statements:
@@ -84,12 +85,17 @@ resources:
         AttributeDefinitions:
           - AttributeName: connectionId
             AttributeType: S
+          - AttributeName: ttl
+            AttributeType: S
         KeySchema:
           - AttributeName: connectionId
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+        TimeToLiveSpecification: 
+          AttributeName: ttl
+          Enabled: true
                           
 
 functions:
@@ -170,5 +176,4 @@ functions:
   defaultHandler:
     handler: src/websocket/defaultHandler.handler
     events:
-      - websocket: $default #simple event definition without extra route property
-
+      - websocket: $default

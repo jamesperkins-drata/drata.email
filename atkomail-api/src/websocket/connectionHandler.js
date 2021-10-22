@@ -35,7 +35,8 @@ const baseHandler = async (event) => {
         const connectionId = event.requestContext.connectionId
         const params = {TableName: process.env.DYNAMO_TABLE_NAME,
         Item:{
-                'connectionId': connectionId
+                'connectionId': connectionId,
+                ttl: parseInt((Date.now() / 1000) + 3600)
             }
         }
         try{

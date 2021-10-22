@@ -41,8 +41,8 @@ module.exports.sort = async (event) => {
         logger.error("Unable to sort mail", {error: error})
     }
 
+    //update any clients waiting on this box
     try{
-        //update any clients waiting on this box
         var params = {
             TableName: process.env.DYNAMO_TABLE_NAME,
             FilterExpression: "#mb = :mailbox",
@@ -55,11 +55,28 @@ module.exports.sort = async (event) => {
         }
         
         var response = await notificationsDB.scan(params).promise()
-        response.Items.forEach(async function (item){
-            logger.info(item)
-            await apiGateway.postToConnection({ConnectionId:item.connectionId,Data:"refresh your box"}).promise()
-        })
+
+        await Promise.all(response.Items.map(async (item) => {
+            try {
+                logger.debug("Attempting to notify client",{client: item.connectionId, mailbox:item.mailbox})
+                var x = await apiGateway.postToConnection({ConnectionId:item.connectionId,Data:"refresh your box"}).promise()
+                logger.info("Notified client",{client: item.connectionId, mailbox:item.mailbox, val: x})
+            } catch (e) {
+                if(e.code === "GoneException"){
+                    logger.info("Connection is gone, removing from DB",{client: item.connectionId, mailbox:item.mailbox})
+                    var deleteParams = {
+                        TableName: process.env.DYNAMO_TABLE_NAME,
+                        "Key" : {
+                            'connectionId': item.connectionId
+                        }
+                    }
+                    await notificationsDB.delete(deleteParams).promise()
+                } else {
+                    logger.error("Unable to notify client ${item.connectionId} of change",{error: e})
+                }
+            }
+          }));
     } catch (error) {
-        console.error("Unable to notify of mail changes", {error: error})
+        console.error("Unable to notify any client of mail changes", {error: error})
     }
 }
