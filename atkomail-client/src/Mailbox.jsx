@@ -144,7 +144,7 @@ const Mailbox = (props) => {
                             </List.Content>
                             <List.Content floated='right' className="actions">
                                 <List.Icon verticalAlign='middle'>
-                                    <Button onClick={deleteMail} id={msg.id} color='red'><Icon color='white' fitted name='trash'></Icon></Button>
+                                    <Button onClick={deleteMail} id={msg.id} color='red'><Icon color='white' fitted name='trash' id={msg.id}></Icon></Button>
                                 </List.Icon>
                             </List.Content>
                             
