@@ -5,6 +5,14 @@ const AWS = require('aws-sdk');
 var md5 = require("md5"); 
 const winston = require("winston");
 var s3 = new AWS.S3();
+var Mixpanel = require('mixpanel');
+
+var mixpanel = Mixpanel.init(
+    process.env.MIX_PANEL_TOKEN,
+    {
+      host: "api-eu.mixpanel.com",
+    },
+  );
 
 const logger = winston.createLogger({
     level: process.env.LOG_LEVEL || 'info',
@@ -19,6 +27,7 @@ var bucketName = process.env.BUCKET;
 const baseHandler = async (event) => {
     logger.defaultMeta = {requestId: event.requestContext.requestId, principal: event.requestContext.authorizer.principalId};
     logger.info("List mail requested.", { mailbox: event.pathParameters.email})
+    mixpanel.track("List mail", {distinct_id:event.requestContext.authorizer.principalId, mailbox: event.pathParameters.email})
     var listParams = {
         Bucket: bucketName, 
         Delimiter: '/',

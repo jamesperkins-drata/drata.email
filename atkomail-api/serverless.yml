@@ -21,6 +21,7 @@ provider:
     FIXED_AUTH_SECRET: ${file(./config.${opt:stage, self:provider.stage, 'dev'}.json):fixed-secret}
     DYNAMO_TABLE_NAME: { "Ref": "notifications" }
     WEBSOCKET_API_ENDPOINT: !Join ['', [!Ref WebsocketsApi, '.execute-api.', "${self:provider.region}", '.amazonaws.com/', "${opt:stage, self:provider.stage, 'dev'}"]]
+    MIX_PANEL_TOKEN: ${file(./config.${opt:stage, self:provider.stage, 'dev'}.json):mix-panel-token}
   iam:
     role:
       statements:
@@ -159,6 +160,24 @@ functions:
     events:
       - http:
           path: /events/registration
+          method: post
+          authorizer:
+            name: fixed
+            identitySource: method.request.header.Authorization
+  verifyEventHook:
+    handler: src/events/verifyEvent.handler
+    events:
+      - http:
+          path: /events/new_user
+          method: get
+          authorizer:
+            name: fixed
+            identitySource: method.request.header.Authorization
+  newUserEventHook:
+    handler: src/events/newUser.handler
+    events:
+      - http:
+          path: /events/new_user
           method: post
           authorizer:
             name: fixed

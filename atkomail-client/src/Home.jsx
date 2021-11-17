@@ -1,6 +1,6 @@
 import { useOktaAuth } from '@okta/okta-react';
 import React, { useState, useEffect } from 'react';
-import { Divider, Image, Header, Menu, Container} from 'semantic-ui-react';
+import { Divider, Image, Header, Menu, Container, MenuItem} from 'semantic-ui-react';
 import MailRender from './MailRender';
 import Mailbox from './Mailbox';
 import Switcher from './Switcher';
@@ -61,20 +61,23 @@ const Home = () => {
 
   return (
     <Container fluid>
-      <Menu borderless fluid >
+      <Menu fluid borderless stackable>
         <Menu.Item header as='a' href='/'><Header as='h2' className='brandText appName'>
             <Image src={'./favicon.png'} size='mini'  verticalAlign='middle'  />ATKO.email
           </Header></Menu.Item>
         <Menu.Item fluid>
           <Switcher changeMailboxEvent={changeMailbox}></Switcher>
         </Menu.Item>
-        <Menu.Item position='right' href="https://oktawiki.atlassian.net/wiki/spaces/ESE/pages/2309622791/Atko.email">Help</Menu.Item>
-        {authState.isAuthenticated && (
-              <Menu.Item position='right' onClick={logout}>Logout</Menu.Item>
-            )}
-            {!authState.isPending && !authState.isAuthenticated && (
-              <Menu.Item position='right' onClick={login}>Login</Menu.Item>
-            )}
+        <Menu.Menu position='right'>
+          <Menu.Item>Custom Domain</Menu.Item>
+          <Menu.Item href="https://oktawiki.atlassian.net/wiki/spaces/ESE/pages/2309622791/Atko.email">Help</Menu.Item>
+          {authState.isAuthenticated && (
+                <Menu.Item onClick={logout}>Logout</Menu.Item>
+              )}
+              {!authState.isPending && !authState.isAuthenticated && (
+                <Menu.Item onClick={login}>Login</Menu.Item>
+              )}
+        </Menu.Menu>
       </Menu>
         <Divider hidden />
           {active === 'MAILBOX' ? (

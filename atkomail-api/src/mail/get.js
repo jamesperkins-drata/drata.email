@@ -3,6 +3,14 @@ const cors = require('@middy/http-cors')
 const AWS = require('aws-sdk');
 const simpleParser = require('mailparser').simpleParser;
 const winston = require("winston");
+var Mixpanel = require('mixpanel');
+
+var mixpanel = Mixpanel.init(
+    process.env.MIX_PANEL_TOKEN,
+    {
+      host: "api-eu.mixpanel.com",
+    },
+  );
 
 const logger = winston.createLogger({
     level: process.env.LOG_LEVEL || 'info',
@@ -19,6 +27,7 @@ var bucketName = process.env.BUCKET;
 const baseHandler = async (event) => {
     logger.defaultMeta = { requestId: event.requestContext.requestId, principal: event.requestContext.authorizer.principalId };
     logger.info("Get mail requested.", { mailbox: event.pathParameters.email, mailid: event.pathParameters.id })
+    mixpanel.track("Get mail", {distinct_id:event.requestContext.authorizer.principalId, mailbox: event.pathParameters.email})
     try {                
         var getParams = {
             Bucket: bucketName,
