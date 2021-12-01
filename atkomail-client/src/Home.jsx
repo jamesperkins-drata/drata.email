@@ -39,7 +39,7 @@ const Home = () => {
       Sentry.captureException(err);
     }
   };
-
+  
   useEffect(() => {
     if (!authState || !authState.isAuthenticated) {
       setUserInfo(null);
@@ -69,7 +69,6 @@ const Home = () => {
           <Switcher changeMailboxEvent={changeMailbox}></Switcher>
         </Menu.Item>
         <Menu.Menu position='right'>
-          <Menu.Item>Custom Domain</Menu.Item>
           <Menu.Item href="https://oktawiki.atlassian.net/wiki/spaces/ESE/pages/2309622791/Atko.email">Help</Menu.Item>
           {authState.isAuthenticated && (
                 <Menu.Item onClick={logout}>Logout</Menu.Item>
