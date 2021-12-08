@@ -17,7 +17,16 @@ module.exports.sort = async (event) => {
     try {
         var sesNotification = event.Records[0].ses;
 
-        await Promise.all(sesNotification.mail.destination.map(async (destination) => {
+        var destination;
+        for (let index = 0; index < sesNotification.mail.headers.length; index++) {
+            const element = sesNotification.mail.headers[index];
+            if(element.name === "Received"){
+                destination = element.value.split(' for ')[1].split(';')[0]
+                break;
+            }
+        }
+
+        if(destination){
             logger.info("Processing mail",{
                 messageId: sesNotification.mail.messageId,
                 source: sesNotification.mail.source,
@@ -32,13 +41,16 @@ module.exports.sort = async (event) => {
             };
         
             await s3.copyObject(copyParams).promise()
-          }));
-    
-        var deleteParams = {
-            Bucket: bucketName,
-            Key: sesNotification.mail.messageId, 
+        
+            var deleteParams = {
+                Bucket: bucketName,
+                Key: sesNotification.mail.messageId, 
+            }
+            await s3.deleteObject(deleteParams).promise()
         }
-        await s3.deleteObject(deleteParams).promise()
+        else {
+            logger.error("Unable to find destination mailbox mail", {mail: sesNotification.mail})
+        }
         
     } catch (error) {
         logger.error("Unable to sort mail", {error: error})
