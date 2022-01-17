@@ -3,7 +3,7 @@ app: atkomail-api
 service: atkomail-api
 
 frameworkVersion: '2'
-
+	
 provider:
   name: aws
   runtime: nodejs12.x
@@ -37,9 +37,11 @@ provider:
             - dynamodb:PutItem
             - dynamodb:DeleteItem
             - dynamodb:UpdateItem
+            - ssm:GetParameter
           Resource: 
             - "arn:aws:s3:::atkoemail"
             - { "Fn::GetAtt": ["notifications", "Arn"] }
+            - "arn:aws:ssm:${self:provider.region}:${file(./config.${opt:stage, self:provider.stage, 'dev'}.json):aws-account-id}:parameter/atko-email/client_secret_jwt"
 
 resources:
   Resources:
@@ -168,16 +170,19 @@ functions:
     handler: src/events/verifyEvent.handler
     events:
       - http:
-          path: /events/new_user
+          path: /events/userProfileEvent
           method: get
           authorizer:
             name: fixed
             identitySource: method.request.header.Authorization
-  newUserEventHook:
-    handler: src/events/newUser.handler
+  userProfileEvent:
+    handler: src/events/userProfileEvent.handler
+    environment:
+      CLIENT_ID: ${file(./config.${opt:stage, self:provider.stage, 'dev'}.json):event-service-clientid}
+      EVENT_SERVICE_SECRET_NAME:  ${file(./config.${opt:stage, self:provider.stage, 'dev'}.json):event-service-secretname}
     events:
       - http:
-          path: /events/new_user
+          path: /events/userProfileEvent
           method: post
           authorizer:
             name: fixed
