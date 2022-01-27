@@ -11,7 +11,19 @@ const Switcher = (props) => {
     const [domain, setDomain] = useState("atko.email")
     const [domainOptions,setDomainOptions] = useState([])
   
-
+    function updateMailbox(value){
+        if(value.includes('@')){
+            const comp = value.split('@')
+            setMailbox(comp[0])
+            if(comp.length>1){
+                if (domainOptions.filter(function(e) { return e.value === comp[1]; }).length > 0){
+                    setDomain(comp[1])
+                }
+            }
+        } else {
+            setMailbox(value)
+        }
+    }
 
     function changeMailbox(){
         props.changeMailboxEvent(mailbox+"@"+domain)
@@ -54,7 +66,7 @@ const Switcher = (props) => {
                 <GridColumn width={6} className="switcherCol">
                 <Input fluid
                 value={mailbox}
-                onInput={e => setMailbox(e.target.value)}
+                onInput={e => updateMailbox(e.target.value)}
                 labelPosition='right'>
                     <input/>  
                     <Label><Icon name='at' style={{margin:"0em"}} /></Label>
