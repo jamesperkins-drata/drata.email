@@ -166,10 +166,10 @@ const Mailbox = (props) => {
                 </Container>
             ) : (
                 <Container padded>
-                      <Dimmer active inverted>
-        <Loader inverted>Loading</Loader>
-      </Dimmer>
-            </Container>
+                    <Dimmer active inverted id="innerDimmer">
+                        <Loader inverted>Loading</Loader>
+                    </Dimmer>
+                </Container>
             )
             }
         </Container>

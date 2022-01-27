@@ -11,3 +11,7 @@
 .ui.modal > .actions {
     text-align: center !important;
 }
+
+#innerDimmer{
+    position: unset !important;
+}
