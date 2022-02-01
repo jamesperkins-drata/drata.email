@@ -27,7 +27,11 @@ var bucketName = process.env.BUCKET;
 const baseHandler = async (event) => {
     logger.defaultMeta = {requestId: event.requestContext.requestId, principal: event.requestContext.authorizer.principalId};
     logger.info("List mail requested.", { mailbox: event.pathParameters.email})
-    mixpanel.track("List mail", {distinct_id:event.requestContext.authorizer.principalId, mailbox: event.pathParameters.email})
+    if(event.queryStringParameters && event.queryStringParameters.forceRefresh){
+        mixpanel.track("Force refresh", {distinct_id:event.requestContext.authorizer.principalId, mailbox: event.pathParameters.email})
+    } else {
+        mixpanel.track("List mail", {distinct_id:event.requestContext.authorizer.principalId, mailbox: event.pathParameters.email})
+    }
     var listParams = {
         Bucket: bucketName, 
         Delimiter: '/',

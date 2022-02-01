@@ -32,9 +32,16 @@ const Mailbox = (props) => {
         })
     
 
-    const getMail = () => {
+    const getMail = (e) => {
+        var params = {}
+        if(e){
+            params.forceRefresh = true
+        }
         axios.get(config.resourceServer.endpoint +"/mail/"+props.mailbox,
-            { headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() }}
+            { 
+                headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() },
+                params: params
+            }
         )
         .then((data)=>{ setMessages(data.data.messages) })
         .catch((error)=> { Sentry.captureException(error) })
@@ -48,7 +55,9 @@ const Mailbox = (props) => {
     
     const refreshMailbox = (e) => {
         setShowRefreshNotice(true)
-        getMailbox()
+        setMessages(null)
+        if(e){ e.preventDefault() }
+        getMail(true)
     };
     
     const deleteMail = (e) => {
