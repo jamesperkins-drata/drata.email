@@ -1,33 +1,49 @@
 import { useOktaAuth } from '@okta/okta-react';
 import React, { useState, useEffect } from 'react';
 import { Icon, Input, Button, Grid, Form, Select, GridColumn, Label} from 'semantic-ui-react';
+import { useLocation } from "react-router-dom";
 import './Switcher.css'
+
+
 
 const Switcher = (props) => {
 
+    const mailboxQueryValue = useQuery()
     const {authState, oktaAuth} = useOktaAuth();
     const [userInfo, setUserInfo] = useState(null);
     const [mailbox, setMailbox] = useState("")
     const [domain, setDomain] = useState("atko.email")
     const [domainOptions,setDomainOptions] = useState([])
+
+    function useQuery() {
+        return new URLSearchParams(useLocation().search).get('mailbox');
+    }
   
     function updateMailbox(value){
+        //moving these as local values 
+        var localMailbox = mailbox
+        var localDomain = domain
+
         if(value.includes('@')){
             const comp = value.split('@')
+            localMailbox = comp[0]
             setMailbox(comp[0])
             if(comp.length>1){
                 if (domainOptions.filter(function(e) { return e.value === comp[1]; }).length > 0){
+                    localDomain = comp[1]
                     setDomain(comp[1])
                 }
             }
         } else {
             setMailbox(value)
+            localMailbox = value
         }
+        return localMailbox+"@"+localDomain
     }
 
-    function changeMailbox(){
+    function changeMailbox(value){
         props.changeMailboxEvent(mailbox+"@"+domain)
-    }  
+    }
 
     useEffect(() => {
         if (!authState || !authState.isAuthenticated) {
@@ -41,24 +57,26 @@ const Switcher = (props) => {
                     info.maildomains.forEach(element => {
                         var domain = element.split(':')[1]
                         domains.push({key: domain, text: domain, value: domain})
-
                     });
                 }
                 else {
                     domains.push({key: 'atko.email', text: 'atko.email', value: 'atko.email'})
                 }
                 setDomainOptions(domains)
-                //default the user to a mailbox with their sub
-                var val = info.email.split('@')[0]
-                setMailbox(val)
+                if(mailboxQueryValue == null){
+                    props.changeMailboxEvent(updateMailbox(info.email))
+                } else {
+                    props.changeMailboxEvent(updateMailbox(mailboxQueryValue))
+                }
             })
         }
       }, [authState, oktaAuth]);
-      if (!authState) {
-        return (
-          <div>Loading...</div>
-        );
-      }
+
+    if (!authState) {
+    return (
+        <div>Loading...</div>
+    );
+    }
 
     return(
         <Form style={{width:'600px'}}>
