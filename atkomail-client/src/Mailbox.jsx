@@ -105,6 +105,7 @@ const Mailbox = (props) => {
                     <div>
                         <Popup 
                             content='Click to copy'
+                            mouseLeaveDelay={500}
                             trigger={
                                 <b className="address"
                                     onClick={()=>{
@@ -112,7 +113,17 @@ const Mailbox = (props) => {
                                         }}
                                 >{props.mailbox}</b>} />
                         &nbsp;has {messages.length} {messages.length === 1 ?(<span>message</span>):(<span>messages</span>)} 
+                        <Popup
+                        content='Address copied to clipboard'
+                        eventsEnabled={true}
+                        on='click'
+                        mouseLeaveDelay={500}
+                        trigger={<Button compact floated='right' onClick={()=>{
+                            navigator.clipboard.writeText(window.location.href+'?mailbox='+props.mailbox)
+                            }}><Icon link name="share alternate"></Icon>Share</Button>}
+                        />
                         <Button compact floated='right' onClick={refreshMailbox}><Icon link name="sync"></Icon>Refresh</Button>
+
                                 
                         {messages.length !== 0 && <Modal
                             basic
