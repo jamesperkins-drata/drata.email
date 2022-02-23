@@ -25,18 +25,20 @@ const logger = winston.createLogger({
 var bucketName = process.env.BUCKET;
 
 const baseHandler = async (event) => {
+    var mailbox = event.pathParameters.email.toLowerCase()
+
     logger.defaultMeta = {requestId: event.requestContext.requestId, principal: event.requestContext.authorizer.principalId};
-    logger.info("List mail requested.", { mailbox: event.pathParameters.email})
+    logger.info("List mail requested.", { mailbox: mailbox})
     if(event.queryStringParameters && event.queryStringParameters.forceRefresh){
-        mixpanel.track("Force refresh", {distinct_id:event.requestContext.authorizer.principalId, mailbox: event.pathParameters.email})
+        mixpanel.track("Force refresh", {distinct_id:event.requestContext.authorizer.principalId, mailbox: mailbox})
     } else {
-        mixpanel.track("List mail", {distinct_id:event.requestContext.authorizer.principalId, mailbox: event.pathParameters.email})
+        mixpanel.track("List mail", {distinct_id:event.requestContext.authorizer.principalId, mailbox: mailbox})
     }
     var listParams = {
         Bucket: bucketName, 
         Delimiter: '/',
         MaxKeys: 100,
-        Prefix: event.pathParameters.email+"/"
+        Prefix: mailbox+"/"
        };
 
     try {

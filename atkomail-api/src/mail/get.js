@@ -25,13 +25,23 @@ var s3 = new AWS.S3();
 var bucketName = process.env.BUCKET;
 
 const baseHandler = async (event) => {
+    if(event.pathParameters.email == null || event.pathParameters.id == null){
+        console.error("Unable to process list request",{error: error})
+        return{
+            status: 400,
+            error: "Missing path parameter."
+        }
+    }
+    var mailbox = event.pathParameters.email.toLowerCase()
+    var mailid = event.pathParameters.id
+
     logger.defaultMeta = { requestId: event.requestContext.requestId, principal: event.requestContext.authorizer.principalId };
-    logger.info("Get mail requested.", { mailbox: event.pathParameters.email, mailid: event.pathParameters.id })
-    mixpanel.track("Get mail", {distinct_id:event.requestContext.authorizer.principalId, mailbox: event.pathParameters.email})
+    logger.info("Get mail requested.", { mailbox: mailbox, mailid: event.pathParameters.id })
+    mixpanel.track("Get mail", {distinct_id:event.requestContext.authorizer.principalId, mailbox: mailbox})
     try {                
         var getParams = {
             Bucket: bucketName,
-            Key: event.pathParameters.email+"/"+event.pathParameters.id
+            Key: mailbox+"/"+mailid
         }
         var obj = await s3.getObject(getParams).promise()
         let parsed = await simpleParser(obj.Body)

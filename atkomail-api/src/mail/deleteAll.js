@@ -23,14 +23,23 @@ var s3 = new AWS.S3();
 var bucketName = process.env.BUCKET;
 
 const baseHandler = async (event) => {
+    if(event.pathParameters.email == null){
+        console.error("Unable to process list request",{error: error})
+        return{
+            status: 400,
+            error: "Missing path parameter."
+        }
+    }
+    var mailbox = event.pathParameters.email.toLowerCase()
+
     logger.defaultMeta = { requestId: event.requestContext.requestId, principal: event.requestContext.authorizer.principalId };
-    logger.info("Delete all mail requested.", { mailbox: event.pathParameters.email })
-    mixpanel.track("Delete mail", {distinct_id:event.requestContext.authorizer.principalId, mailbox: event.pathParameters.email})
+    logger.info("Delete all mail requested.", { mailbox:  mailbox})
+    mixpanel.track("Delete mail", {distinct_id:event.requestContext.authorizer.principalId, mailbox: mailbox})
     var listParams = {
         Bucket: bucketName, 
         Delimiter: '/',
         MaxKeys: 100,
-        Prefix: event.pathParameters.email+"/"
+        Prefix: mailbox+"/"
        };
 
     try {
@@ -54,7 +63,7 @@ const baseHandler = async (event) => {
             }
             var deleteParams = {
                 Bucket: bucketName,
-                Key: event.pathParameters.email
+                Key: mailbox
             }
             await s3.deleteObject(deleteParams).promise()
             return {
