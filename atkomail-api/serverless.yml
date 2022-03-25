@@ -18,6 +18,7 @@ provider:
     ORIGINS: ${param:origins}
     FIXED_AUTH_SECRET: ${param:fixed-secret}
     DYNAMO_TABLE_NAME: { "Ref": "notifications" }
+    DOMAINS_TABLE_NAME: { "Ref": "domains"}
     WEBSOCKET_API_ENDPOINT: !Join ['', [!Ref WebsocketsApi, '.execute-api.', "${aws:region}", '.amazonaws.com/', "${opt:stage, self:provider.stage, 'dev'}"]]
     MIX_PANEL_TOKEN: ${param:mix-panel-token}
   iam:
@@ -39,6 +40,7 @@ provider:
           Resource: 
             - "arn:aws:s3:::atkoemail"
             - { "Fn::GetAtt": ["notifications", "Arn"] }
+            - { "Fn::GetAtt": ["domains", "Arn"] }
             - "arn:aws:ssm:${aws:region}:${param:aws-account-id}:parameter/${param:event-service-secretname}"
 
 resources:
@@ -95,12 +97,31 @@ resources:
         TimeToLiveSpecification: 
           AttributeName: ttl
           Enabled: true
+    domains:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: domain
+            AttributeType: S
+          - AttributeName: owner
+            AttributeType: S
+        KeySchema:
+          - AttributeName: owner
+            KeyType: HASH
+          - AttributeName: domain
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
                           
 
 functions:
   #Authorizers
   auth:
     handler: src/authorizer/handler.auth
+  jwt:
+    handler: src/authorizer/handler.jwt
   fixed:
     handler: src/authorizer/handler.fixed
 
@@ -151,6 +172,17 @@ functions:
           cors: true
           authorizer:
             name: auth
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: ^Bearer [-0-9a-zA-z\.]*$
+  domainsGet:
+    handler: src/domains/get.handler
+    events:
+      - http:
+          path: /domains
+          method: get
+          cors: true
+          authorizer:
+            name: jwt
             identitySource: method.request.header.Authorization
             identityValidationExpression: ^Bearer [-0-9a-zA-z\.]*$
   registrationHook:

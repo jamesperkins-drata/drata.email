@@ -5,6 +5,19 @@ const baseVerifier = new OktaJwtVerifier({
     issuer: process.env.ISSUER,
 });
 
+exports.jwt = async (event, context) => {
+    await baseVerifier.verifyAccessToken(parseTokenFromEvent(event), process.env.AUDIENCE)
+    .then((jwt) => {
+        context.succeed(
+        generateAuthResponse(jwt.claims.sub, 'Allow',  event.methodArn))
+    })
+    .catch((err) => {
+        console.error("Token failed validation")
+        console.error(err)
+        context.fail('Unauthorized')
+    });
+}
+
 exports.auth = async (event, context) => {
     await baseVerifier.verifyAccessToken(parseTokenFromEvent(event), process.env.AUDIENCE)
     .then((jwt) => {
@@ -27,8 +40,8 @@ exports.auth = async (event, context) => {
         }
     })
     .catch((err) => {
-        console.error("token failed validation")
-        console.error(error)
+        console.error("Token failed validation")
+        console.error(err)
         context.fail('Unauthorized')
     });
 };

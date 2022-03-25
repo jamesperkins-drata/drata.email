@@ -26,7 +26,7 @@ var bucketName = process.env.BUCKET;
 
 const baseHandler = async (event) => {
     if(event.pathParameters.email == null || event.pathParameters.id == null){
-        console.error("Unable to process list request",{error: error})
+        console.error("Unable to process get request",{error: error})
         return{
             status: 400,
             error: "Missing path parameter."
