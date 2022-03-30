@@ -22,7 +22,7 @@ const logger = winston.createLogger({
 
 const baseHandler = async (event) => {
     logger.defaultMeta = { requestId: event.requestContext.requestId, principal: event.requestContext.authorizer.principalId };
-    logger.info("Get domains.")
+    logger.debug("Get domains called.",{context:event.requestContext})
     mixpanel.track("Get domains", {distinct_id:event.requestContext.authorizer.principalId})
     try {       
         var params = {
@@ -32,7 +32,7 @@ const baseHandler = async (event) => {
                 "#owner": "owner"
             },
             ExpressionAttributeValues: {
-                ":owner": event.requestContext.authorizer.principalId
+                ":owner": event.requestContext.authorizer.uid
             }
         }
 

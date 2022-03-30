@@ -12,6 +12,8 @@ provider:
   logs:
     websocket: true
   environment:
+    CLIENT_ID: ${param:event-service-clientid}
+    EVENT_SERVICE_SECRET_NAME:  ${param:event-service-secretname}
     BUCKET: ${param:bucket-name}
     ISSUER: ${param:issuer-uri}
     AUDIENCE: ${param:audience}
@@ -21,6 +23,7 @@ provider:
     DOMAINS_TABLE_NAME: { "Ref": "domains"}
     WEBSOCKET_API_ENDPOINT: !Join ['', [!Ref WebsocketsApi, '.execute-api.', "${aws:region}", '.amazonaws.com/', "${opt:stage, self:provider.stage, 'dev'}"]]
     MIX_PANEL_TOKEN: ${param:mix-panel-token}
+    LOG_LEVEL: ${param:log-level, 'info'}
   iam:
     role:
       statements:
@@ -41,6 +44,13 @@ provider:
             - "arn:aws:s3:::atkoemail"
             - { "Fn::GetAtt": ["notifications", "Arn"] }
             - { "Fn::GetAtt": ["domains", "Arn"] }
+            - "arn:aws:ssm:${aws:region}:${param:aws-account-id}:parameter/${param:event-service-secretname}"
+        - Effect: 'Allow'
+          Action:
+            - ses:VerifyDomainIdentity
+            - ssm:GetParameter
+          Resource: 
+            - "*"
             - "arn:aws:ssm:${aws:region}:${param:aws-account-id}:parameter/${param:event-service-secretname}"
 
 resources:
@@ -185,6 +195,17 @@ functions:
             name: jwt
             identitySource: method.request.header.Authorization
             identityValidationExpression: ^Bearer [-0-9a-zA-z\.]*$
+  domainsAdd:
+    handler: src/domains/add.handler
+    events:
+      - http:
+          path: /domains
+          method: post
+          cors: true
+          authorizer:
+            name: jwt
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: ^Bearer [-0-9a-zA-z\.]*$
   registrationHook:
     handler: src/events/registration.handler
     events:
@@ -205,9 +226,6 @@ functions:
             identitySource: method.request.header.Authorization
   userProfileEvent:
     handler: src/events/userProfileEvent.handler
-    environment:
-      CLIENT_ID: ${param:event-service-clientid}
-      EVENT_SERVICE_SECRET_NAME:  ${param:event-service-secretname}
     events:
       - http:
           path: /events/userProfileEvent
