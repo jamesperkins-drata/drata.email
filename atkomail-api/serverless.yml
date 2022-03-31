@@ -48,6 +48,7 @@ provider:
         - Effect: 'Allow'
           Action:
             - ses:VerifyDomainIdentity
+            - ses:DeleteIdentity
             - ssm:GetParameter
           Resource: 
             - "*"
@@ -201,6 +202,17 @@ functions:
       - http:
           path: /domains
           method: post
+          cors: true
+          authorizer:
+            name: jwt
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: ^Bearer [-0-9a-zA-z\.]*$
+  domainsDelete:
+    handler: src/domains/delete.handler
+    events:
+      - http:
+          path: /domains/{domain}
+          method: delete
           cors: true
           authorizer:
             name: jwt

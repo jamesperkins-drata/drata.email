@@ -108,7 +108,8 @@ const baseHandler = async (event) => {
             TableName: process.env.DOMAINS_TABLE_NAME,
             Item:{
                     'owner': event.requestContext.authorizer.uid,
-                    'domain': payload.domain
+                    'domain': payload.domain,
+                    'groupId': group.id
                 }
         }
         await dynamoClient.put(createParams).promise()
