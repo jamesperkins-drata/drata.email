@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Divider, Icon, Header, Menu, Container, MenuItem} from 'semantic-ui-react';
 import MailRender from './MailRender';
 import Mailbox from './Mailbox';
+import Domains from './Domains'
 import Switcher from './Switcher';
 import {ThemeProvider} from "styled-components";
 import { GlobalStyles } from "./components/Globalstyle";
@@ -14,6 +15,7 @@ import * as Sentry from "@sentry/react";
 
 const Home = () => {
   const {authState, oktaAuth} = useOktaAuth();
+  const [features, setFeatures] = useState([])
   const [active, setActive] = useState('MAILBOX')
 
   const [theme, themeToggler] = useDarkMode();
@@ -35,6 +37,10 @@ const Home = () => {
   const showMailbox = ()=> {
     setActive('MAILBOX')
   }
+
+  const showDomains = ()=> {
+    setActive('DOMAINS')
+  }
   const login = async () => oktaAuth.signInWithRedirect();
 
   const logout = async () => {
@@ -51,10 +57,13 @@ const Home = () => {
       Sentry.configureScope(scope => scope.setUser(null));
     } else {
       oktaAuth.getUser().then((info) => {
+        if(info.features){
+          setFeatures(info.features)
+        }
         Sentry.setUser({ email: info.email });
       })
     }
-  }, [authState, oktaAuth]);
+  }, [authState, oktaAuth,setFeatures]);
   if (!authState) {
     return (
       <div>Loading...</div>
@@ -74,6 +83,9 @@ const Home = () => {
         </Menu.Item>
         <Menu.Menu position='right'>
           <Menu.Item><ThemeToggle theme={theme} toggleTheme={themeToggler}></ThemeToggle></Menu.Item>
+          {features.includes('ff:customdomain') && (
+                <Menu.Item onClick={showDomains}>Domains  <Icon verticalAlign='middle' name='flask' class="brandText" /></Menu.Item>
+          )}
           <Menu.Item href="https://oktawiki.atlassian.net/wiki/spaces/ESE/pages/2309622791/Atko.email">Help</Menu.Item>
           {authState.isAuthenticated && (
                 <Menu.Item onClick={logout}>Logout</Menu.Item>
@@ -88,7 +100,10 @@ const Home = () => {
             <Mailbox mailbox={mailbox} getMailEvent={getMail}/>
           ) : active === 'MAIL' ? (
             <MailRender msgId={msgId} showMailboxEvent={showMailbox}/>
-          ) : null }
+          ) : active === 'DOMAINS' ? (
+            <Domains/>
+          )
+          : null }
     </Container>
     </ThemeProvider>
   );

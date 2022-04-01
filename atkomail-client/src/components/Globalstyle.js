@@ -7,6 +7,10 @@ export const GlobalStyles = createGlobalStyle`
     transition: all 0.50s linear;
   }
 
+  .header{
+    color: ${({ theme }) => theme.text} !important;
+  }
+
   .ui.inverted.dimmer .ui.loader {
     color: ${({ theme }) => theme.text};
   }
@@ -52,4 +56,5 @@ export const GlobalStyles = createGlobalStyle`
   .brandColor{
     background-color: ${({ theme }) => theme.brand} !important;
   }
+
   `

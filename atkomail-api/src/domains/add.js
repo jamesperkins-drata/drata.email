@@ -109,7 +109,9 @@ const baseHandler = async (event) => {
             Item:{
                     'owner': event.requestContext.authorizer.uid,
                     'domain': payload.domain,
-                    'groupId': group.id
+                    'groupId': group.id,
+                    'verification': verifyDomain.VerificationToken,
+                    'created': Date.now()
                 }
         }
         await dynamoClient.put(createParams).promise()

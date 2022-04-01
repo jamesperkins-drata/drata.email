@@ -27,3 +27,7 @@ code {
 .actions {
   margin-right: 35px !important;
 }
+
+.clickable:hover{
+  cursor: pointer;
+}
