@@ -100,8 +100,8 @@ const Domains = (props) => {
                                         eventsEnabled={true}
                                         on='click'
                                         mouseLeaveDelay={500}
-                                        trigger={<span className="clickable">{item.verification}<Icon name='copy' compact onClick={()=>{
-                                            navigator.clipboard.writeText(window.location.href+'?mailbox='+props.mailbox)
+                                        trigger={<span className="clickable"> {item.verification} <Icon name='copy' compact onClick={()=>{
+                                            navigator.clipboard.writeText(item.verification)
                                             }}></Icon></span>}
                                         />
                                         </List.Description>
