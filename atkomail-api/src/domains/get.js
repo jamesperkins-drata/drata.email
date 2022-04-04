@@ -37,6 +37,21 @@ const baseHandler = async (event) => {
         }
 
         var response = await dynamoClient.query(params).promise()
+        logger.debug("dynamo stage completed", {dynamoResponse: response})
+
+        var userDomains = []
+        response.Items.forEach(element => {
+            userDomains.push(element.domain)
+        });
+        var identities = await new AWS.SES({apiVersion: '2010-12-01'}).getIdentityVerificationAttributes({Identities: userDomains}).promise();
+        logger.debug("SES stage completed", {sesResponse: identities})
+
+        response.Items.forEach(element => {
+            element.status = identities.VerificationAttributes[element.domain].VerificationStatus
+            if(element.status!='Success'){
+                element.verification = identities.VerificationAttributes[element.domain].VerificationToken
+            }
+        });
 
         return {
             statusCode: 200,

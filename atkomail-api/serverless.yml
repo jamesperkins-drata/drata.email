@@ -47,6 +47,7 @@ provider:
             - "arn:aws:ssm:${aws:region}:${param:aws-account-id}:parameter/${param:event-service-secretname}"
         - Effect: 'Allow'
           Action:
+            - ses:GetIdentityVerificationAttributes
             - ses:VerifyDomainIdentity
             - ses:DeleteIdentity
             - ssm:GetParameter

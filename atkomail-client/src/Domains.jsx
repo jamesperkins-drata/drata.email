@@ -88,11 +88,15 @@ const Domains = (props) => {
                                 <Button onClick={deleteDomain} id={item.domain} color='red'><Icon fitted name='trash' id={item.domain}></Icon></Button>
                         </List.Icon>
                             <List.Content>
-                                <List.Header><b>{item.domain}</b></List.Header>
-                                
+                                <List.Description><b>{item.domain}</b></List.Description>
+                                    {item.status &&
+                                     <List.Description>
+                                     Verification {item.status}
+                                     </List.Description>
+                                    }
                                     {item.verification &&
                                         <List.Description>
-                                        <b>Verification TXT:</b>
+                                        Verification TXT record
                                         <Popup
                                         content='Copied to clipboard'
                                         eventsEnabled={true}
@@ -107,7 +111,7 @@ const Domains = (props) => {
 
                                 <List.Description>
                                     {item.created &&
-                                        <span><b>Added:</b> <ReactTimeAgo date={item.created} locale="en-US"/></span>
+                                        <span>Added <ReactTimeAgo date={item.created} locale="en-US"/></span>
                                     }   
                                 </List.Description>
                             </List.Content>                           

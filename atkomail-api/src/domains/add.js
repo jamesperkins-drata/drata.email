@@ -110,7 +110,6 @@ const baseHandler = async (event) => {
                     'owner': event.requestContext.authorizer.uid,
                     'domain': payload.domain,
                     'groupId': group.id,
-                    'verification': verifyDomain.VerificationToken,
                     'created': Date.now()
                 }
         }
