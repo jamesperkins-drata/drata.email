@@ -94,7 +94,7 @@ const Domains = (props) => {
                                     }
                                     {item.verification &&
                                         <List.Description>
-                                        Verification TXT record
+                                        Verification TXT record 
                                         <Popup
                                         content='Copied to clipboard'
                                         eventsEnabled={true}
