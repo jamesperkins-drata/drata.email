@@ -57,4 +57,10 @@ export const GlobalStyles = createGlobalStyle`
     background-color: ${({ theme }) => theme.brand} !important;
   }
 
+  .ui.modal > .content, .actions, .modal {
+    background: ${({ theme }) => theme.background} !important;
+  }
+  .ui.modal > .header {
+    background-color: ${({ theme }) => theme.header};
+  }
   `

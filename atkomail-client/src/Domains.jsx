@@ -13,24 +13,23 @@ const Domains = (props) => {
     const {oktaAuth} = useOktaAuth();
     const [domains,setDomains] = useState([])
     const [spinner, setSpinner] = React.useState(false)
-    const [open, setOpen] = React.useState(false)
     const [openInput, setOpenInput] = React.useState(false)
     const [input, setInput] = useState('');
 
 
     const getDomains = (e) => {
+        setSpinner(true)
         axios.get(config.resourceServer.endpoint +"/domains",
             { 
                 headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() }
             }
         )
-        .then((data)=>{ setDomains(data.data.domains) })
+        .then((data)=>{ setDomains(data.data.domains); setSpinner(false) })
         .catch((error)=> { Sentry.captureException(error) })
     }
 
     const addDomain = (e) =>{
         setOpenInput(false) 
-        setDomains([])
         setSpinner(true)
         //validate domain
         var data = JSON.stringify({
@@ -44,14 +43,13 @@ const Domains = (props) => {
                     },
             }
         )
-        .then((data)=>{ getDomains(); setSpinner(false)})
-        .catch((error)=> { Sentry.captureException(error); getDomains(); setSpinner(false) })
+        .then((data)=>{ getDomains()})
+        .catch((error)=> { Sentry.captureException(error); getDomains()})
     }
 
     const deleteDomain = (e) =>{
-        setOpen(false)
-        setDomains([])
         setSpinner(true)
+        setDomains([])
         axios.delete(config.resourceServer.endpoint +"/domains/"+e.target.id,
             { 
                 headers: {
@@ -59,8 +57,8 @@ const Domains = (props) => {
                 },
             }
         )
-        .then((data)=>{ getDomains(); getDomains(); setSpinner(false)})
-        .catch((error)=> { Sentry.captureException(error); getDomains(); setSpinner(false) })
+        .then((data)=>{ getDomains()})
+        .catch((error)=> { Sentry.captureException(error); getDomains()})
     }
 
     useEffect(() => {
@@ -79,7 +77,7 @@ const Domains = (props) => {
                         <p>To update the domains to which you have access logout and back in.</p>
                     </div>
                     <Divider hidden />
-                    <h2>Your Domains</h2>
+                    <h2>Your Domains <Icon className='clickable' link name="sync" size='small' onClick={getDomains}></Icon></h2>
                     <List divided relaxed>  
                     {domains.length !== 0 ? (
                         domains.map((item) =>
@@ -152,7 +150,7 @@ const Domains = (props) => {
                                         </Modal.Description>
                                     </Modal.Content>
                                     <Modal.Actions>
-                                        <Button color='black' onClick={() => setOpenInput(false)}>
+                                        <Button color='' onClick={() => setOpenInput(false)}>
                                         Cancel
                                         </Button>
                                         <Button
