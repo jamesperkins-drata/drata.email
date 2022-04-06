@@ -1,7 +1,7 @@
 const winston = require("winston");
 var Mixpanel = require('mixpanel');
 const okta = require('@okta/okta-sdk-nodejs');
-const AWS = require ('aws-sdk')
+const AWS = require ('aws-sdk');
 
 
 var mixpanel = Mixpanel.init(
@@ -29,10 +29,11 @@ const oktaPrivateKeyPromise = ssm
 
 module.exports.handler = async (event) => {
     var payload = JSON.parse(event.body)
-
+    logger.debug('User profile event invoked.',{payload: payload, event:event})
     for (let index = 0; index < payload.data.events.length; index++) {
         try{
             const event = payload.data.events[index];
+            logger.debug('Retrieving user from Okta', {userid: event.target[0].alternateId })
             var user = await findUserPromise(event.target[0].alternateId)
             var mixPanelUserProperties = {
                 $name: event.target[0].displayName,
