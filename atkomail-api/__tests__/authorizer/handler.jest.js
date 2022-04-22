@@ -19,6 +19,8 @@ var invalidEvent= {
 test('jwt-pass', async ()=>{
   var response = await auth.jwt(validEvent)
   expect(response).toBeDefined()
+  expect(response.principalId).toBeDefined()
+  expect(response.principalId).toMatch(/tester/)
   expect(response.policyDocument).toBeDefined()
   expect(response.policyDocument.Statement).toBeDefined()
   expect(response.policyDocument.Statement[0].Effect).toBeDefined()
@@ -33,6 +35,42 @@ test('jwt-pass', async ()=>{
 test('jwt-fail', async ()=>{
   var response = await auth.jwt(invalidEvent)
   expect(response).toBeDefined()
+  expect(response.principalId).toBeDefined()
+  expect(response.principalId).toMatch(/unknown/)
+  expect(response.policyDocument).toBeDefined()
+  expect(response.policyDocument.Statement).toBeDefined()
+  expect(response.policyDocument.Statement[0].Effect).toBeDefined()
+  expect(response.policyDocument.Statement[0].Effect).toMatch(/Deny/)
+  expect(response.policyDocument.Statement[0].Resource).toBeDefined()
+  expect(response.policyDocument.Statement[0].Resource).toMatch(/atest/)
+})
+
+test('fixed-pass', async ()=>{
+  var validFixedEvent= {
+    methodArn: 'atest',
+    authorizationToken: 'TESTTOKEN'
+  }
+  var response = await auth.fixed(validFixedEvent)
+  expect(response).toBeDefined()
+  expect(response.principalId).toBeDefined()
+  expect(response.principalId).toMatch(/unknown/)
+  expect(response.policyDocument).toBeDefined()
+  expect(response.policyDocument.Statement).toBeDefined()
+  expect(response.policyDocument.Statement[0].Effect).toBeDefined()
+  expect(response.policyDocument.Statement[0].Effect).toMatch(/Allow/)
+  expect(response.policyDocument.Statement[0].Resource).toBeDefined()
+  expect(response.policyDocument.Statement[0].Resource).toMatch(/atest/)
+})
+
+test('fixed-fail', async ()=>{
+  var validFixedEvent= {
+    methodArn: 'atest',
+    authorizationToken: 'WRONG'
+  }
+  var response = await auth.fixed(validFixedEvent)
+  expect(response).toBeDefined()
+  expect(response.principalId).toBeDefined()
+  expect(response.principalId).toMatch(/unknown/)
   expect(response.policyDocument).toBeDefined()
   expect(response.policyDocument.Statement).toBeDefined()
   expect(response.policyDocument.Statement[0].Effect).toBeDefined()

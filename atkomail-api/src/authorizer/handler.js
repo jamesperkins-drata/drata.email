@@ -22,7 +22,7 @@ exports.jwt = async (event) => {
         return generateAuthResponse(jwt.claims, 'Allow',  event.methodArn)
     } catch(err){
         logger.error("Token failed validation "+err, {error: err})
-        return generateAuthResponse("unverified", 'Deny',  event.methodArn)
+        return generateAuthResponse(null, 'Deny',  event.methodArn)
     }
 }
 
@@ -56,12 +56,14 @@ exports.auth = async (event) => {
     };
 };
 
-
-exports.fixed = (event) => {
-    if(event.authorizationToken == process.env.FIXED_AUTH_SECRET) {
+exports.fixed = async (event) => {
+    logger.debug('Event recieved',{event:event})
+    if(event.authorizationToken === process.env.FIXED_AUTH_SECRET) {
+        logger.debug('Request granted.')
         return generateAuthResponse(null, 'Allow',  event.methodArn)
     }
     else{
+        logger.warn('Request denied.')
         return generateAuthResponse(null, 'Deny',  event.methodArn)
     }
 }
