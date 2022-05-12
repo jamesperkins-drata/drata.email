@@ -16,7 +16,7 @@ const baseHandler = async (event) => {
     logger.defaultMeta = { connectionId: event.requestContext.connectionId };
     logger.info("Event.", { event: event })
     logger.info("payload", {payload: JSON.parse(event.body)})
-    var mailbox = JSON.parse(event.body).mailbox
+    var mailbox = JSON.parse(event.body).mailbox.toLowerCase()
     const connectionId = event.requestContext.connectionId
     const params = {TableName: process.env.DYNAMO_TABLE_NAME,
         Key: {'connectionId': connectionId},

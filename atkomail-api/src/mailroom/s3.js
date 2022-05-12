@@ -14,10 +14,11 @@ const logger = winston.createLogger({
 });
 
 module.exports.sort = async (event) => {
+    var destination;
+
     try {
         var sesNotification = event.Records[0].ses;
 
-        var destination;
         for (let index = 0; index < sesNotification.mail.headers.length; index++) {
             const element = sesNotification.mail.headers[index];
             if(element.name === "Received"){
@@ -27,6 +28,7 @@ module.exports.sort = async (event) => {
         }
 
         if(destination){
+            destination = destination.toLowerCase()
             logger.info("Processing mail",{
                 messageId: sesNotification.mail.messageId,
                 source: sesNotification.mail.source,
@@ -65,7 +67,7 @@ module.exports.sort = async (event) => {
                 "#mb": "mailbox"
             },
             ExpressionAttributeValues: {
-                ":mailbox": sesNotification.mail.destination[0]
+                ":mailbox": destination
             }
         }
         
