@@ -63,4 +63,7 @@ export const GlobalStyles = createGlobalStyle`
   .ui.modal > .header {
     background-color: ${({ theme }) => theme.header};
   }
+  .errorMsg {
+    text-align: center;
+  }
   `

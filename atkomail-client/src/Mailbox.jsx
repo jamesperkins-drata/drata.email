@@ -14,6 +14,7 @@ const Mailbox = (props) => {
 
     const {oktaAuth } = useOktaAuth();
     const [messages,setMessages] = useState(null)
+    const [error,setError] = useState(null)
     const [open, setOpen] = React.useState(false)
     const didUnmount = useRef(false);
     const [showRefreshNotice, setShowRefreshNotice] = useState(false)
@@ -44,11 +45,12 @@ const Mailbox = (props) => {
             }
         )
         .then((data)=>{ setMessages(data.data.messages) })
-        .catch((error)=> { Sentry.captureException(error) })
+        .catch((error)=> { setError(error);Sentry.captureException(error) })
     }
     
     const getMailbox = (e) => {
         setMessages(null)
+        setError(null)
         if(e){ e.preventDefault() }
         getMail()
       };
@@ -56,11 +58,13 @@ const Mailbox = (props) => {
     const refreshMailbox = (e) => {
         setShowRefreshNotice(true)
         setMessages(null)
+        setError(null)
         if(e){ e.preventDefault() }
         getMail(true)
     };
     
     const deleteMail = (e) => {
+        setError(null)
         axios.delete(config.resourceServer.endpoint +"/mail/"+e.target.id,
             { headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() }}
         )
@@ -69,6 +73,7 @@ const Mailbox = (props) => {
     };
 
     const deleteMailbox = () => {
+        setError(null)
         axios.delete(config.resourceServer.endpoint +"/mail/"+props.mailbox,
             { headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() }}
         )
@@ -78,6 +83,7 @@ const Mailbox = (props) => {
 
     useEffect(() => {
         setMessages(null)
+        setError(null)
         didUnmount.current = true;
         if(props.mailbox){
             sendMessage(JSON.stringify({mailbox: props.mailbox}))
@@ -85,7 +91,7 @@ const Mailbox = (props) => {
                 { headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() }}
             )
             .then((data)=>{ setMessages(data.data.messages) })
-            .catch((error)=> { Sentry.captureException(error) })
+            .catch((error)=> { console.log(error);setError(error); Sentry.captureException(error) })
         }
     }, [props.mailbox, props.domain, oktaAuth,sendMessage])
 
@@ -184,7 +190,18 @@ const Mailbox = (props) => {
                         )}
                     </List>
                 </Container>
-            ) : (
+            )
+            : ( error ? 
+                <Container padded>
+                    <div className="errorMsg">
+                        <Icon name='warning sign' size='huge' />
+                        <h2>Something went wrong</h2>
+                        <p>Encountered a {error.message}, please try again.</p>
+                        <p>If the problem persists please reach out to #atko-email.</p>
+                        <Button className='brandColor' compact onClick={getMailbox}><Icon link name="sync"></Icon>Retry</Button>
+                   </div>
+                </Container>     
+                : 
                 <Container padded>
                     <Dimmer active inverted id="innerDimmer">
                         <Loader inverted>Loading</Loader>
