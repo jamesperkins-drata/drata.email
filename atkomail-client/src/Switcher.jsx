@@ -12,7 +12,7 @@ const Switcher = (props) => {
     const {authState, oktaAuth} = useOktaAuth();
     const [userInfo, setUserInfo] = useState(null);
     const [mailbox, setMailbox] = useState("")
-    const [domain, setDomain] = useState("atko.email")
+    const [domain, setDomain] = useState("drata.email")
     const [domainOptions,setDomainOptions] = useState([])
 
     function useQuery() {

@@ -197,7 +197,7 @@ const Mailbox = (props) => {
                         <Icon name='warning sign' size='huge' />
                         <h2>Something went wrong</h2>
                         <p>Encountered a {error.message}, please try again.</p>
-                        <p>If the problem persists please reach out to #atko-email.</p>
+                        <p>If the problem persists please reach out to #atko-mail-slack-channel-here.</p>
                         <Button className='brandColor' compact onClick={getMailbox}><Icon link name="sync"></Icon>Retry</Button>
                    </div>
                 </Container>     
