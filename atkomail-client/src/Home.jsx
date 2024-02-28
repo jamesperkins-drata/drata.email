@@ -76,7 +76,7 @@ const Home = () => {
     <Container fluid>
       <Menu fluid borderless stackable>
         <Menu.Item header as='a' href='/'><Header as='h2' className='brandText appName'>
-            <Icon verticalAlign='middle' name='envelope open' size='tiny' class="brandText" className="appIco"  />ATKO.email
+            <Icon verticalAlign='middle' name='envelope open' size='tiny' class="brandText" className="appIco"  />Drata.email
           </Header></Menu.Item>
         <Menu.Item fluid>
           <Switcher changeMailboxEvent={changeMailbox}></Switcher>
