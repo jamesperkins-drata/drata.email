@@ -14,13 +14,7 @@ TimeAgo.addDefaultLocale(en)
 
 const gitInfo = GitInfo();
 
-Sentry.init({
-  dsn: "https://f65e6bc426164cb583bc42f2a9d4eed9@o876653.ingest.sentry.io/5890468",
-  integrations: [new Integrations.BrowserTracing()],
-  tracesSampleRate: 1.0,
-  autoSessionTracking: true,
-  release: gitInfo.commit.hash,
-});
+
 
 
 /* eslint-disable react/jsx-filename-extension */
