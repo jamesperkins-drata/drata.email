@@ -45,7 +45,7 @@ const Mailbox = (props) => {
             }
         )
         .then((data)=>{ setMessages(data.data.messages) })
-        .catch((error)=> { setError(error);Sentry.captureException(error) })
+        .catch((error)=> { setError("james2: ", error);Sentry.captureException(error) })
     }
     
     const getMailbox = (e) => {
@@ -91,7 +91,7 @@ const Mailbox = (props) => {
                 { headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() }}
             )
             .then((data)=>{ setMessages(data.data.messages) })
-            .catch((error)=> { console.log(error);setError(error); Sentry.captureException(error) })
+            .catch((error)=> { console.log("james: ", error);setError(error); Sentry.captureException(error) })
         }
     }, [props.mailbox, props.domain, oktaAuth,sendMessage])
 
