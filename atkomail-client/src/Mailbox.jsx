@@ -20,7 +20,7 @@ const Mailbox = (props) => {
     const [showRefreshNotice, setShowRefreshNotice] = useState(false)
 
     const {sendMessage} = useWebSocket(
-        'wss://notify.atko.email',
+        'wss://notify.drata.email',
         {
             onMessage: (message) => {getMail()},
             //This line would authenticate the request but leaks AT on the wire
