@@ -19,8 +19,9 @@ const Mailbox = (props) => {
     const didUnmount = useRef(false);
     const [showRefreshNotice, setShowRefreshNotice] = useState(false)
 
+    //update
     const {sendMessage} = useWebSocket(
-        'wss://notify.drata.email',
+        'wss://notify.drata.email', 
         {
             onMessage: (message) => {getMail()},
             //This line would authenticate the request but leaks AT on the wire
