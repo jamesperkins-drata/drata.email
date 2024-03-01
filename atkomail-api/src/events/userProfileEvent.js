@@ -64,7 +64,7 @@ const findUserPromise = (...args) => {
     return new Promise (async (resolve, reject) => {
         const privateKey = await oktaPrivateKeyPromise;
         const client = new okta.Client({
-            orgUrl: 'https://account.atko.email',
+            orgUrl: 'https://login.drata.email',
             authorizationMode: 'PrivateKey',
             clientId: process.env.CLIENT_ID,
             scopes: ['okta.users.read'],

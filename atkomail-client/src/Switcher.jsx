@@ -60,7 +60,7 @@ const Switcher = (props) => {
                     });
                 }
                 else {
-                    domains.push({key: 'atko.email', text: 'atko.email', value: 'atko.email'})
+                    domains.push({key: 'drata.email', text: 'drata.email', value: 'drata.email'})
                 }
                 setDomainOptions(domains)
                 if(mailboxQueryValue == null){

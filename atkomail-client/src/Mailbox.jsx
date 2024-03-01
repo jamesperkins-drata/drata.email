@@ -21,7 +21,7 @@ const Mailbox = (props) => {
 
     //update
     const {sendMessage} = useWebSocket(
-        'wss://notify.drata.email', 
+        'wss://97kv8yqfnh.execute-api.us-east-1.amazonaws.com/dev/', 
         {
             onMessage: (message) => {getMail()},
             //This line would authenticate the request but leaks AT on the wire

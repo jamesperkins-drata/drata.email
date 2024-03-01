@@ -73,7 +73,7 @@ const Domains = (props) => {
                     <div>
                         <h1>Domains</h1>
                         <p><Icon verticalAlign='middle' name='flask' class="brandText" /><b>BETA</b> This feature is still very early. Please provide any feedback on <a href="slack://channel?team=T6WPNMPFU&amp;id=C02AERWJZP0"><Icon fitted name='slack' target='_blank'></Icon> atko-email.</a>.</p>
-                        <p>Atko.email allows you to use your own domains to recieve email to any address beneath that domain. Note that any mail sent to this domain can be read by user's you choose to share this domain with, this includes sensitive mailboxes such as administrator, webmaster and abuse.</p>
+                        <p>Drata.email allows you to use your own domains to recieve email to any address beneath that domain. Note that any mail sent to this domain can be read by user's you choose to share this domain with, this includes sensitive mailboxes such as administrator, webmaster and abuse.</p>
                         <p>To update the domains to which you have access logout and back in.</p>
                     </div>
                     <Divider hidden />

@@ -85,7 +85,7 @@ const baseHandler = async (event) => {
         //create okta group
         const privateKey = await oktaPrivateKeyPromise;
         const client = new okta.Client({
-            orgUrl: 'https://account.atko.email',
+            orgUrl: 'https://login.drata.email',
             authorizationMode: 'PrivateKey',
             clientId: process.env.CLIENT_ID,
             scopes: ['okta.groups.manage','okta.users.read'],
