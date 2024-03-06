@@ -92,7 +92,7 @@ const Mailbox = (props) => {
                 { headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() }}
             )
             .then((data)=>{ setMessages(data.data.messages) })
-            .catch((error)=> { console.log("james: ", error);setError(error); Sentry.captureException(error) })
+            .catch((error)=> { console.log("1james: ", error, " - oktaAUth: ", oktaAuth.getAccessToken());setError(error); Sentry.captureException(error) })
         }
     }, [props.mailbox, props.domain, oktaAuth,sendMessage])
 
@@ -100,6 +100,7 @@ const Mailbox = (props) => {
     useEffect(() => {
         return () => {
           console.log("cleaned up");
+          console.log("jp");
         };
       }, []);
 
