@@ -88,6 +88,8 @@ const Mailbox = (props) => {
         didUnmount.current = true;
         if(props.mailbox){
             sendMessage(JSON.stringify({mailbox: props.mailbox}))
+            console.log("sendMessage: ", sendMessage);
+            console.log("request url: ", config.resourceServer.endpoint +"/mail/"+props.mailbox);
             axios.get(config.resourceServer.endpoint +"/mail/"+props.mailbox,
                 { headers: { Authorization: "Bearer " + oktaAuth.getAccessToken() }}
             )
@@ -100,7 +102,7 @@ const Mailbox = (props) => {
     useEffect(() => {
         return () => {
           console.log("cleaned up");
-          console.log("jp");
+          //console.log("jp");
         };
       }, []);
 
